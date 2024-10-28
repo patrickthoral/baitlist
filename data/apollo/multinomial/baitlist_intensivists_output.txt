@@ -1,0 +1,448 @@
+Model run by Patrick using Apollo 0.3.4 on R 4.4.1 for Windows.
+Please acknowledge the use of Apollo by citing Hess & Palma (2019)
+  DOI 10.1016/j.jocm.2019.100170
+  www.ApolloChoiceModelling.com
+
+Model name                                  : baitlist_intensivists
+Model description                           : Multinomial Logit Model for Life Sustaining Therapy
+Model run at                                : 2024-10-28 19:31:09.303055
+Estimation method                           : bgw
+Model diagnosis                             : Relative function convergence
+Optimisation diagnosis                      : Maximum found
+     hessian properties                     : Negative definite
+     maximum eigenvalue                     : -1.233054
+     reciprocal of condition number         : 0.00115599
+Number of individuals                       : 26
+Number of rows in database                  : 650
+Number of modelled outcomes                 : 650
+
+Number of cores used                        :  1 
+Model without mixing
+
+LL(start)                                   : -714.1
+LL at equal shares, LL(0)                   : -714.1
+LL at observed shares, LL(C)                : -672.62
+LL(final)                                   : -554.41
+Rho-squared vs equal shares                  :  0.2236 
+Adj.Rho-squared vs equal shares              :  0.2096 
+Rho-squared vs observed shares               :  0.1757 
+Adj.Rho-squared vs observed shares           :  0.1639 
+AIC                                         :  1128.82 
+BIC                                         :  1173.59 
+
+Estimated parameters                        : 10
+Time taken (hh:mm:ss)                       :  00:00:2.87 
+     pre-estimation                         :  00:00:0.3 
+     estimation                             :  00:00:1.79 
+     post-estimation                        :  00:00:0.78 
+Iterations                                  :  10  
+
+Unconstrained optimisation.
+
+Estimates:
+                                 Estimate        s.e.   t.rat.(0)    Rob.s.e. Rob.t.rat.(0)
+asc_continue                       2.5396      0.6194      4.1002     0.47355         5.363
+asc_withdraw                       0.0000          NA          NA          NA            NA
+asc_timelimited                    2.9627      0.6173      4.7999     0.48319         6.132
+b_expected_los                     0.0000          NA          NA          NA            NA
+b_clinical_situation               0.0000          NA          NA          NA            NA
+b_age                             -1.1337      0.1172     -9.6748     0.13229        -8.570
+b_frailty                         -0.1064      0.1225     -0.8688     0.06931        -1.535
+b_life_expectancy                  0.5126      0.1442      3.5554     0.12882         3.979
+b_suffering                        0.0000          NA          NA          NA            NA
+b_disability_cardiovascular       -0.3795      0.1170     -3.2431     0.08585        -4.421
+b_disability_pulmonary            -0.4419      0.1469     -3.0085     0.13250        -3.335
+b_disability_renal                -0.1977      0.1414     -1.3978     0.11780        -1.678
+b_disability_neurological          0.0000          NA          NA          NA            NA
+b_disability_gastrointestinal     -0.3678      0.2075     -1.7724     0.12785        -2.877
+b_family_values                   -1.6943      0.2086     -8.1222     0.26172        -6.474
+
+
+Overview of choices for MNL model component :
+                                 withdraw continue timelimited
+Times available                    650.00   650.00      650.00
+Times chosen                       319.00   131.00      200.00
+Percentage chosen overall           49.08    20.15       30.77
+Percentage chosen when available    49.08    20.15       30.77
+
+
+
+Classical covariance matrix:
+                                               asc_continue               asc_timelimited
+asc_continue                                        0.38363                       0.37600
+asc_timelimited                                     0.37600                       0.38100
+b_age                                              -0.05047                      -0.05047
+b_frailty                                          -0.02720                      -0.02720
+b_life_expectancy                                  -0.05047                      -0.05047
+b_disability_cardiovascular                        -0.05130                      -0.05130
+b_disability_pulmonary                             -0.06448                      -0.06448
+b_disability_renal                                 -0.03374                      -0.03374
+b_disability_gastrointestinal                      -0.05799                      -0.05799
+b_family_values                                    -0.05183                      -0.05183
+                                                      b_age                     b_frailty
+asc_continue                                      -0.050469                     -0.027202
+asc_timelimited                                   -0.050469                     -0.027202
+b_age                                              0.013731                      0.001612
+b_frailty                                          0.001612                      0.015002
+b_life_expectancy                                  0.002768                      0.003068
+b_disability_cardiovascular                        0.006680                   -1.3288e-04
+b_disability_pulmonary                             0.006757                      0.004824
+b_disability_renal                                 0.001820                     -0.001940
+b_disability_gastrointestinal                      0.004426                      0.005141
+b_family_values                                    0.008053                      0.003039
+                                          b_life_expectancy   b_disability_cardiovascular
+asc_continue                                      -0.050472                     -0.051297
+asc_timelimited                                   -0.050472                     -0.051297
+b_age                                              0.002768                      0.006680
+b_frailty                                          0.003068                   -1.3288e-04
+b_life_expectancy                                  0.020785                      0.006484
+b_disability_cardiovascular                        0.006484                      0.013694
+b_disability_pulmonary                             0.009622                      0.006139
+b_disability_renal                                 0.004444                      0.004094
+b_disability_gastrointestinal                      0.002453                      0.006691
+b_family_values                                    0.001596                      0.002965
+                                     b_disability_pulmonary            b_disability_renal
+asc_continue                                      -0.064478                     -0.033741
+asc_timelimited                                   -0.064478                     -0.033741
+b_age                                              0.006757                      0.001820
+b_frailty                                          0.004824                     -0.001940
+b_life_expectancy                                  0.009622                      0.004444
+b_disability_cardiovascular                        0.006139                      0.004094
+b_disability_pulmonary                             0.021573                      0.005901
+b_disability_renal                                 0.005901                      0.020007
+b_disability_gastrointestinal                      0.006930                      0.003746
+b_family_values                                    0.006095                      0.002534
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                      -0.057992                     -0.051831
+asc_timelimited                                   -0.057992                     -0.051831
+b_age                                              0.004426                      0.008053
+b_frailty                                          0.005141                      0.003039
+b_life_expectancy                                  0.002453                      0.001596
+b_disability_cardiovascular                        0.006691                      0.002965
+b_disability_pulmonary                             0.006930                      0.006095
+b_disability_renal                                 0.003746                      0.002534
+b_disability_gastrointestinal                      0.043076                      0.008082
+b_family_values                                    0.008082                      0.043513
+
+Robust covariance matrix:
+                                               asc_continue               asc_timelimited
+asc_continue                                       0.224250                      0.216457
+asc_timelimited                                    0.216457                      0.233470
+b_age                                             -0.032472                     -0.031714
+b_frailty                                         -0.009847                     -0.005755
+b_life_expectancy                                 -0.024345                     -0.029533
+b_disability_cardiovascular                       -0.022333                     -0.021225
+b_disability_pulmonary                            -0.039004                     -0.036083
+b_disability_renal                                -0.016218                     -0.021137
+b_disability_gastrointestinal                      0.006931                      0.007247
+b_family_values                                   -0.061164                     -0.065714
+                                                      b_age                     b_frailty
+asc_continue                                      -0.032472                     -0.009847
+asc_timelimited                                   -0.031714                     -0.005755
+b_age                                              0.017500                   -9.1469e-04
+b_frailty                                       -9.1469e-04                      0.004804
+b_life_expectancy                                 -0.004915                      0.002040
+b_disability_cardiovascular                        0.004181                    6.0573e-04
+b_disability_pulmonary                            -0.001332                      0.003758
+b_disability_renal                                -0.002583                    3.9159e-04
+b_disability_gastrointestinal                     -0.001358                     -0.002023
+b_family_values                                    0.009289                     -0.002880
+                                          b_life_expectancy   b_disability_cardiovascular
+asc_continue                                      -0.024345                     -0.022333
+asc_timelimited                                   -0.029533                     -0.021225
+b_age                                             -0.004915                      0.004181
+b_frailty                                          0.002040                    6.0573e-04
+b_life_expectancy                                  0.016595                      0.001996
+b_disability_cardiovascular                        0.001996                      0.007369
+b_disability_pulmonary                             0.006961                      0.004311
+b_disability_renal                                 0.007694                    2.5271e-04
+b_disability_gastrointestinal                   -9.0422e-04                    -6.697e-05
+b_family_values                                    0.007856                      0.008798
+                                     b_disability_pulmonary            b_disability_renal
+asc_continue                                      -0.039004                     -0.016218
+asc_timelimited                                   -0.036083                     -0.021137
+b_age                                             -0.001332                     -0.002583
+b_frailty                                          0.003758                    3.9159e-04
+b_life_expectancy                                  0.006961                      0.007694
+b_disability_cardiovascular                        0.004311                    2.5271e-04
+b_disability_pulmonary                             0.017557                      0.004058
+b_disability_renal                                 0.004058                      0.013876
+b_disability_gastrointestinal                     -0.002099                     -0.003607
+b_family_values                                    0.004857                      0.004769
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                       0.006931                     -0.061164
+asc_timelimited                                    0.007247                     -0.065714
+b_age                                             -0.001358                      0.009289
+b_frailty                                         -0.002023                     -0.002880
+b_life_expectancy                               -9.0422e-04                      0.007856
+b_disability_cardiovascular                      -6.697e-05                      0.008798
+b_disability_pulmonary                            -0.002099                      0.004857
+b_disability_renal                                -0.003607                      0.004769
+b_disability_gastrointestinal                      0.016345                   -1.1985e-04
+b_family_values                                 -1.1985e-04                      0.068495
+
+Classical correlation matrix:
+                                               asc_continue               asc_timelimited
+asc_continue                                         1.0000                        0.9835
+asc_timelimited                                      0.9835                        1.0000
+b_age                                               -0.6954                       -0.6978
+b_frailty                                           -0.3586                       -0.3598
+b_life_expectancy                                   -0.5652                       -0.5672
+b_disability_cardiovascular                         -0.7077                       -0.7102
+b_disability_pulmonary                              -0.7088                       -0.7112
+b_disability_renal                                  -0.3851                       -0.3865
+b_disability_gastrointestinal                       -0.4511                       -0.4527
+b_family_values                                     -0.4012                       -0.4025
+                                                      b_age                     b_frailty
+asc_continue                                        -0.6954                     -0.358565
+asc_timelimited                                     -0.6978                     -0.359802
+b_age                                                1.0000                      0.112294
+b_frailty                                            0.1123                      1.000000
+b_life_expectancy                                    0.1638                      0.173733
+b_disability_cardiovascular                          0.4872                     -0.009270
+b_disability_pulmonary                               0.3926                      0.268153
+b_disability_renal                                   0.1098                     -0.111989
+b_disability_gastrointestinal                        0.1820                      0.202224
+b_family_values                                      0.3295                      0.118950
+                                          b_life_expectancy   b_disability_cardiovascular
+asc_continue                                       -0.56522                     -0.707728
+asc_timelimited                                    -0.56717                     -0.710170
+b_age                                               0.16384                      0.487159
+b_frailty                                           0.17373                     -0.009270
+b_life_expectancy                                   1.00000                      0.384344
+b_disability_cardiovascular                         0.38434                      1.000000
+b_disability_pulmonary                              0.45439                      0.357152
+b_disability_renal                                  0.21791                      0.247346
+b_disability_gastrointestinal                       0.08198                      0.275495
+b_family_values                                     0.05308                      0.121454
+                                     b_disability_pulmonary            b_disability_renal
+asc_continue                                        -0.7088                      -0.38513
+asc_timelimited                                     -0.7112                      -0.38646
+b_age                                                0.3926                       0.10980
+b_frailty                                            0.2682                      -0.11199
+b_life_expectancy                                    0.4544                       0.21791
+b_disability_cardiovascular                          0.3572                       0.24735
+b_disability_pulmonary                               1.0000                       0.28404
+b_disability_renal                                   0.2840                       1.00000
+b_disability_gastrointestinal                        0.2273                       0.12760
+b_family_values                                      0.1989                       0.08590
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                       -0.45112                      -0.40116
+asc_timelimited                                    -0.45268                      -0.40254
+b_age                                               0.18197                       0.32946
+b_frailty                                           0.20222                       0.11895
+b_life_expectancy                                   0.08198                       0.05308
+b_disability_cardiovascular                         0.27550                       0.12145
+b_disability_pulmonary                              0.22735                       0.19892
+b_disability_renal                                  0.12760                       0.08590
+b_disability_gastrointestinal                       1.00000                       0.18667
+b_family_values                                     0.18667                       1.00000
+
+Robust correlation matrix:
+                                               asc_continue               asc_timelimited
+asc_continue                                         1.0000                        0.9460
+asc_timelimited                                      0.9460                        1.0000
+b_age                                               -0.5183                       -0.4961
+b_frailty                                           -0.3000                       -0.1719
+b_life_expectancy                                   -0.3991                       -0.4745
+b_disability_cardiovascular                         -0.5494                       -0.5117
+b_disability_pulmonary                              -0.6216                       -0.5636
+b_disability_renal                                  -0.2907                       -0.3714
+b_disability_gastrointestinal                        0.1145                        0.1173
+b_family_values                                     -0.4935                       -0.5197
+                                                      b_age                     b_frailty
+asc_continue                                       -0.51834                      -0.30001
+asc_timelimited                                    -0.49615                      -0.17186
+b_age                                               1.00000                      -0.09976
+b_frailty                                          -0.09976                       1.00000
+b_life_expectancy                                  -0.28844                       0.22846
+b_disability_cardiovascular                         0.36815                       0.10181
+b_disability_pulmonary                             -0.07599                       0.40926
+b_disability_renal                                 -0.16574                       0.04796
+b_disability_gastrointestinal                      -0.08031                      -0.22836
+b_family_values                                     0.26830                      -0.15877
+                                          b_life_expectancy   b_disability_cardiovascular
+asc_continue                                       -0.39908                     -0.549354
+asc_timelimited                                    -0.47446                     -0.511699
+b_age                                              -0.28844                      0.368154
+b_frailty                                           0.22846                      0.101805
+b_life_expectancy                                   1.00000                      0.180523
+b_disability_cardiovascular                         0.18052                      1.000000
+b_disability_pulmonary                              0.40781                      0.379000
+b_disability_renal                                  0.50707                      0.024991
+b_disability_gastrointestinal                      -0.05490                     -0.006102
+b_family_values                                     0.23301                      0.391587
+                                     b_disability_pulmonary            b_disability_renal
+asc_continue                                       -0.62161                      -0.29074
+asc_timelimited                                    -0.56358                      -0.37136
+b_age                                              -0.07599                      -0.16574
+b_frailty                                           0.40926                       0.04796
+b_life_expectancy                                   0.40781                       0.50707
+b_disability_cardiovascular                         0.37900                       0.02499
+b_disability_pulmonary                              1.00000                       0.26000
+b_disability_renal                                  0.26000                       1.00000
+b_disability_gastrointestinal                      -0.12392                      -0.23953
+b_family_values                                     0.14007                       0.15468
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                       0.114478                     -0.493513
+asc_timelimited                                    0.117313                     -0.519651
+b_age                                             -0.080312                      0.268304
+b_frailty                                         -0.228357                     -0.158772
+b_life_expectancy                                 -0.054903                      0.233013
+b_disability_cardiovascular                       -0.006102                      0.391587
+b_disability_pulmonary                            -0.123924                      0.140072
+b_disability_renal                                -0.239535                      0.154681
+b_disability_gastrointestinal                      1.000000                     -0.003582
+b_family_values                                   -0.003582                      1.000000
+
+ 20 most extreme outliers in terms of lowest average per choice prediction:
+   ID Avg prob per choice
+ 4819           0.2568915
+ 4824           0.3224983
+ 4741           0.3495999
+ 4747           0.3677567
+ 4820           0.3703721
+ 4842           0.3721312
+ 4749           0.3755663
+ 4836           0.3830949
+ 4732           0.3992291
+ 4837           0.4177277
+ 4826           0.4202929
+ 4739           0.4224532
+ 4825           0.4262776
+ 4838           0.4273913
+ 4737           0.4488385
+ 4736           0.4552023
+ 4742           0.4557385
+ 4750           0.4767645
+ 4822           0.4949375
+ 4746           0.5042943
+
+Changes in parameter estimates from starting values:
+                                  Initial    Estimate  Difference
+asc_continue                        0.000      2.5396      2.5396
+asc_withdraw                        0.000      0.0000      0.0000
+asc_timelimited                     0.000      2.9627      2.9627
+b_expected_los                      0.000      0.0000      0.0000
+b_clinical_situation                0.000      0.0000      0.0000
+b_age                               0.000     -1.1337     -1.1337
+b_frailty                           0.000     -0.1064     -0.1064
+b_life_expectancy                   0.000      0.5126      0.5126
+b_suffering                         0.000      0.0000      0.0000
+b_disability_cardiovascular         0.000     -0.3795     -0.3795
+b_disability_pulmonary              0.000     -0.4419     -0.4419
+b_disability_renal                  0.000     -0.1977     -0.1977
+b_disability_neurological           0.000      0.0000      0.0000
+b_disability_gastrointestinal       0.000     -0.3678     -0.3678
+b_family_values                     0.000     -1.6943     -1.6943
+
+Settings and functions used in model definition:
+
+apollo_control
+--------------
+                       Value                                                
+modelName              "baitlist_intensivists"                              
+modelDescr             "Multinomial Logit Model for Life Sustaining Therapy"
+indivID                "ID"                                                 
+outputDirectory        "data/apollo/multinomial/"                           
+debug                  "FALSE"                                              
+nCores                 "1"                                                  
+workInLogs             "FALSE"                                              
+seed                   "13"                                                 
+mixing                 "FALSE"                                              
+HB                     "FALSE"                                              
+noValidation           "FALSE"                                              
+noDiagnostics          "FALSE"                                              
+calculateLLC           "TRUE"                                               
+analyticHessian        "FALSE"                                              
+memorySaver            "FALSE"                                              
+panelData              "TRUE"                                               
+analyticGrad           "TRUE"                                               
+analyticGrad_manualSet "FALSE"                                              
+overridePanel          "FALSE"                                              
+preventOverridePanel   "FALSE"                                              
+noModification         "FALSE"                                              
+
+Hessian routines attempted
+--------------------------
+numerical jacobian of LL analytical gradient
+
+Scaling used in computing Hessian
+---------------------------------
+                                  Value
+asc_continue                  2.5396161
+asc_timelimited               2.9627363
+b_age                         1.1336782
+b_frailty                     0.1064143
+b_life_expectancy             0.5125813
+b_disability_cardiovascular   0.3795165
+b_disability_pulmonary        0.4418825
+b_disability_renal            0.1977083
+b_disability_gastrointestinal 0.3678475
+b_family_values               1.6942852
+
+
+apollo_probabilities
+----------------------
+function(apollo_beta, apollo_inputs, functionality="estimate"){
+
+      ### Attach inputs and detach after function exit
+      apollo_attach(apollo_beta, apollo_inputs)
+      on.exit(apollo_detach(apollo_beta, apollo_inputs))
+
+      ### Create list of probabilities P
+      P = list()
+
+      ### List of utilities: these must use the same names as in mnl_settings, order is irrelevant
+      V = list()
+      V[["continue"]] = asc_continue +
+        b_expected_los * expected_los +
+        b_clinical_situation * clinical_situation +
+        b_age * age +
+        b_frailty * frailty +
+        b_life_expectancy * life_expectancy +
+        b_suffering * suffering +
+        b_disability_cardiovascular * disability_cardiovascular +
+        b_disability_pulmonary * disability_pulmonary +
+        b_disability_renal * disability_renal +
+        b_disability_neurological * disability_neurological +
+        b_disability_gastrointestinal * disability_gastrointestinal +
+        b_family_values * family_values
+
+      V[["timelimited"]] = asc_timelimited +
+        b_expected_los * expected_los +
+        b_clinical_situation * clinical_situation +
+        b_age * age +
+        b_frailty * frailty +
+        b_life_expectancy * life_expectancy +
+        b_suffering * suffering +
+        b_disability_cardiovascular * disability_cardiovascular +
+        b_disability_pulmonary * disability_pulmonary +
+        b_disability_renal * disability_renal +
+        b_disability_neurological * disability_neurological +
+        b_disability_gastrointestinal * disability_gastrointestinal +
+        b_family_values * family_values
+
+      V[["withdraw"]] = asc_withdraw
+
+
+      ### Define settings for MNL model component
+      mnl_settings = list(
+        alternatives  = c(withdraw=3, continue=2, timelimited=1),
+        avail         = 1, # alternative always available
+        choiceVar     = CHOICE_MULTINOMIAL,
+        utilities     = V
+      )
+
+      ### Compute probabilities using MNL model
+      P[["model"]] = apollo_mnl(mnl_settings, functionality)
+
+      ### Take product across observation for same individual
+      P = apollo_panelProd(P, apollo_inputs, functionality)
+
+      ### Prepare and return outputs of function
+      P = apollo_prepareProb(P, apollo_inputs, functionality)
+      return(P)
+    }
+<bytecode: 0x0000018286e648c8>
+<environment: 0x000001828d1d00a0>

@@ -1,0 +1,18 @@
+Package: baitlist
+Title: Behavioural Artificial Intelligence Technology for Life Sustaining Therapy (BAITLiST)
+Version: 0.0.0.9000
+Authors@R: 
+    person("Patrick", "Thoral", , "p.thoral@amsterdamumc.nl", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-6140-7195"))
+Description: Model estimation, prediction and evaluation based on discrete choice therapy for the decisision surrounding continuation or withdrawal for life sustaining therapy on the intensive care unit
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    apollo,
+    dplyr,
+    readxl
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
