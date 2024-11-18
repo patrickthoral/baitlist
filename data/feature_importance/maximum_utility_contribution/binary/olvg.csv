@@ -1,0 +1,13 @@
+"coefficient_name","coef","variable","max_util_contrib","importance_pct"
+"b_expected_los",0,"expected_los",0,0
+"b_clinical_situation",0,"clinical_situation",0,0
+"b_age",-1.14277824188152,"age",3.42833472564457,41.2481541775478
+"b_frailty",-0.207108698017697,"frailty",0.414217396035395,4.98367411060715
+"b_life_expectancy",0.514975339814889,"life_expectancy",1.02995067962978,12.3918951410591
+"b_suffering",0,"suffering",0,0
+"b_disability_cardiovascular",-0.292349579651008,"disability_cardiovascular",0.877048738953023,10.5522489781847
+"b_disability_pulmonary",-0.319623103904504,"disability_pulmonary",0.639246207809007,7.69111777210179
+"b_disability_renal",0,"disability_renal",0,0
+"b_disability_neurological",0,"disability_neurological",0,0
+"b_disability_gastrointestinal",0,"disability_gastrointestinal",0,0
+"b_family_values",-1.92268865417477,"family_values",1.92268865417477,23.1329098204994

@@ -1,4 +1,4 @@
-#' Calculate feature importance
+#' Calculate feature importance using standardized coefficients
 #'
 #' Calculates feature importance of the binary BAIT models using standardized coefficients
 #' (\eqn{\beta ^{\ast }={\frac {s_{x}}{s_{y}}}\beta}) as percentage of total.
@@ -6,8 +6,8 @@
 #' @export
 #'
 #' @examples
-#' feature_importance_binary()
-feature_importance_binary <- function() {
+#' standardized_coefficients()
+standardized_coefficients <- function() {
   groups <- list(
     'aggregate' = 'All respondents',
     'aumc' ='Amsterdam UMC',
@@ -65,7 +65,88 @@ feature_importance_binary <- function() {
 
     # save feature importance to disk
     write.csv(tbl_coefficients, paste0(
-      "./data/feature_importance/binary/", group, ".csv"),
+      "./data/feature_importance/standardized_coefficients/binary/", group, ".csv"),
+      row.names = FALSE
+    )
+
+    cat("\n\n")
+
+  }
+
+}
+
+#' Calculate relative importance using maximum utility contribution.
+#'
+#' Maximum Utility Contribution is calculated by multiplying the criteria level range
+#' (difference between the highest and lowest level) with the absolute value of the
+#' criterion weight. To calculate a percentage, the maximum utility contributions
+#' are summed.
+#' @export
+#'
+#' @examples
+#' maximum_utility_contribution()
+maximum_utility_contribution <- function() {
+  groups <- list(
+    'aggregate' = 'All respondents',
+    'aumc' ='Amsterdam UMC',
+    'olvg'= 'OLVG',
+    'intensivists' = 'Intensivists',
+    'fellows' = 'Fellows'
+  )
+
+  for(group in names(groups)) {
+    cat(paste0("Calculating relative importance using maximum utility contribution for: ",
+               groups[group],"\n"))
+
+    model <- readRDS(paste0('data/apollo/binary/baitlist_', group, '_model.rds'))
+
+    coefficients <- model$estimate
+
+    data <- baitlist::load_responses(group)
+
+    coef_names <- character()
+    coef_values <- double()
+    variable_names <- character()
+    mucs <- double()
+
+    for(coef_name in names(coefficients)) {
+      name_split <- strsplit(coef_name, split="b_")[[1]]
+      if(length(name_split) > 1) {
+
+        coef_names <- append(coef_names, coef_name)
+        coef_values <- append(coef_values, coefficients[coef_name])
+
+        variable_name <- name_split[[2]]
+        variable_names <- append(variable_names, variable_name)
+
+
+        # calculate maximum utility contribution
+        min_x <- min(data[[variable_name]])
+        max_x <- max(data[[variable_name]])
+        coef_weight <- coefficients[coef_name]
+        muc <- (max_x - min_x)*abs(coef_weight)
+
+        mucs <- append(mucs, muc)
+      }
+    }
+
+    tbl_coefficients <-  dplyr::tibble(coefficient_name=coef_names,
+                                       coef=coef_values,
+                                       variable=variable_names,
+                                       max_util_contrib=mucs
+    )
+
+    tbl_coefficients <- tbl_coefficients %>%
+      dplyr::mutate(
+        importance_pct=100*max_util_contrib/sum(max_util_contrib)
+      )
+
+    # print feature importance to console
+    print(tbl_coefficients)
+
+    # save feature importance to disk
+    write.csv(tbl_coefficients, paste0(
+      "./data/feature_importance/maximum_utility_contribution/binary/", group, ".csv"),
       row.names = FALSE
     )
 
