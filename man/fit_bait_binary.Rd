@@ -5,7 +5,12 @@
 \title{Fits the responses in a BAIT binary logistic regression model for each
 respondent group}
 \usage{
-fit_bait_binary()
+fit_bait_binary(elimination_threshold = 0.2)
+}
+\arguments{
+\item{elimination_threshold}{Performs step-wise backward elimination of least significant coefficients using
+p > \code{elimination_threshold}. Default: 0.20. To disable backward elimination of coefficients
+set elimination_threshold = 1}
 }
 \description{
 Uses the \code{apollo} package for modelling.

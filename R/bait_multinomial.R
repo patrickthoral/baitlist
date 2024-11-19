@@ -2,11 +2,17 @@
 #' respondent group
 #'
 #' Uses the `apollo` package for modelling.
+#'
+#' @param elimination_threshold
+#' Performs step-wise backward elimination of least significant coefficients using
+#' p > `elimination_threshold`. Default: 0.20. To disable backward elimination of coefficients
+#' set elimination_threshold = 1
+#'
 #' @export
 #'
 #' @examples
 #' fit_bait_multinomial()
-fit_bait_multinomial <- function() {
+fit_bait_multinomial <- function(elimination_threshold = 0.20) {
 
   groups <- c(
     'aggregate',
@@ -159,8 +165,8 @@ fit_bait_multinomial <- function() {
 
     # first iteration
 
-    elimination_threshold = 0.20
-    eliminated = character()
+    # uses elimination_threshold argument (default 0.20)
+    eliminated <- character()
 
     while( length(eliminated) < length(apollo_beta)) {
 
@@ -179,7 +185,7 @@ fit_bait_multinomial <- function() {
       # Wald-test
       coef <- model$estimate
       se <- model$robse
-      wald_stat = coef^2/se^2
+      wald_stat <- coef^2/se^2
       p_value <- 1 - pchisq(wald_stat, df=1)
 
       # determine coefficients that are above threshold
@@ -200,10 +206,23 @@ fit_bait_multinomial <- function() {
         apollo_beta = apollo_beta,
         apollo_fixed = apollo_fixed,
         apollo_control = apollo_control)
-
-      print(paste0("Covariates eliminated: ", eliminated))
-
     }
+
+    if(length(eliminated) > 0) {
+      cat(paste0("Covariates eliminated: ", paste0(eliminated, collapse=", "), "\n"))
+    }
+
+    # save Wald stats for weight estimates to disk
+    tbl_wald <-  dplyr::tibble(coefficient_name=names(coef),
+                               weight = coef,
+                               robust_se = se,
+                               wald = wald_stat,
+                               p_value = p_value
+    )
+    write.csv(tbl_wald, paste0(
+      apollo_control$outputDirectory, apollo_control$modelName, "_weights_wald.csv"),
+      row.names = FALSE
+    )
 
     # ################################################################# #
     #### MODEL OUTPUTS                                               ####

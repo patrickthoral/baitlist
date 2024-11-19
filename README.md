@@ -19,6 +19,7 @@ renv::init()
 
 # restore environment
 renv::restore()
+
 ```
 
 ## Load development packages
@@ -43,6 +44,7 @@ usethis::use_package("apollo")
 
 # Update documentation
 devtools::document()
+
 ```
 
 ## Running analysis
@@ -52,10 +54,20 @@ Model the data and calculate feature importance across groups of respondents
 # Allows accessing functions with baitlist::fun()
 devtools::load_all()
 
-# Fit binary logit models for all groups
-baitlist::fit_bait_binary()
+# Fit binary logit models for all groups. Disables backward elimination by setting threshold to 1
+baitlist::fit_bait_binary(elimination_threshold = 1)
 
-# Calculate feature importance
-baitlist::feature_importance_binary()
+# Fit multinomial logit models for all groups. Disables backward elimination by setting threshold to 1
+baitlist::fit_bait_multinomial(elimination_threshold = 1)
+
+# Calculate feature importance using standardized coefficients
+baitlist::standardized_coefficients()
+
+# Calculate feature importance using maximum utility contribution
+baitlist::maximum_utility_contribution()
+
+# Compare model weights between models using Wald test
+baitlist::compare_models()
+
 ```
 

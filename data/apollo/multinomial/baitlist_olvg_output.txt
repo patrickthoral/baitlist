@@ -5,13 +5,13 @@ Please acknowledge the use of Apollo by citing Hess & Palma (2019)
 
 Model name                                  : baitlist_olvg
 Model description                           : Multinomial Logit Model for Life Sustaining Therapy
-Model run at                                : 2024-10-28 19:31:01.740961
+Model run at                                : 2024-11-19 17:32:17.319609
 Estimation method                           : bgw
 Model diagnosis                             : Relative function convergence
 Optimisation diagnosis                      : Maximum found
      hessian properties                     : Negative definite
-     maximum eigenvalue                     : -1.119608
-     reciprocal of condition number         : 0.001748
+     maximum eigenvalue                     : -0.278928
+     reciprocal of condition number         : 0.000347431
 Number of individuals                       : 17
 Number of rows in database                  : 425
 Number of modelled outcomes                 : 425
@@ -22,40 +22,40 @@ Model without mixing
 LL(start)                                   : -466.91
 LL at equal shares, LL(0)                   : -466.91
 LL at observed shares, LL(C)                : -435.48
-LL(final)                                   : -353.53
-Rho-squared vs equal shares                  :  0.2428 
-Adj.Rho-squared vs equal shares              :  0.2257 
-Rho-squared vs observed shares               :  0.1882 
-Adj.Rho-squared vs observed shares           :  0.1744 
-AIC                                         :  723.05 
-BIC                                         :  755.47 
+LL(final)                                   : -350.82
+Rho-squared vs equal shares                  :  0.2486 
+Adj.Rho-squared vs equal shares              :  0.2187 
+Rho-squared vs observed shares               :  0.1944 
+Adj.Rho-squared vs observed shares           :  0.1669 
+AIC                                         :  729.64 
+BIC                                         :  786.37 
 
-Estimated parameters                        : 8
-Time taken (hh:mm:ss)                       :  00:00:1.12 
-     pre-estimation                         :  00:00:0.21 
-     estimation                             :  00:00:0.16 
-     post-estimation                        :  00:00:0.75 
-Iterations                                  :  10  
+Estimated parameters                        : 14
+Time taken (hh:mm:ss)                       :  00:00:0.98 
+     pre-estimation                         :  00:00:0.28 
+     estimation                             :  00:00:0.14 
+     post-estimation                        :  00:00:0.55 
+Iterations                                  :  12  
 
 Unconstrained optimisation.
 
 Estimates:
                                  Estimate        s.e.   t.rat.(0)    Rob.s.e. Rob.t.rat.(0)
-asc_continue                       2.0838      0.6526       3.193     0.41182         5.060
-asc_withdraw                       0.0000          NA          NA          NA            NA
-asc_timelimited                    2.7431      0.6477       4.235     0.42084         6.518
-b_expected_los                     0.0000          NA          NA          NA            NA
-b_clinical_situation               0.0000          NA          NA          NA            NA
-b_age                             -1.1428      0.1443      -7.920     0.17895        -6.386
-b_frailty                         -0.2071      0.1497      -1.384     0.07864        -2.634
-b_life_expectancy                  0.5150      0.1770       2.909     0.15402         3.344
-b_suffering                        0.0000          NA          NA          NA            NA
-b_disability_cardiovascular       -0.2924      0.1345      -2.174     0.08597        -3.401
-b_disability_pulmonary            -0.3196      0.1732      -1.846     0.13184        -2.424
-b_disability_renal                 0.0000          NA          NA          NA            NA
-b_disability_neurological          0.0000          NA          NA          NA            NA
-b_disability_gastrointestinal      0.0000          NA          NA          NA            NA
-b_family_values                   -1.9227      0.2622      -7.334     0.30788        -6.245
+asc_continue                      3.76962      1.2634      2.9836     1.61089        2.3401
+asc_withdraw                      0.00000          NA          NA          NA            NA
+asc_timelimited                   4.42887      1.2609      3.5125     1.65167        2.6814
+b_expected_los                    0.09700      0.2582      0.3757     0.20205        0.4801
+b_clinical_situation              0.80197      0.4246      1.8887     0.44666        1.7955
+b_age                            -1.24461      0.1672     -7.4438     0.20486       -6.0754
+b_frailty                        -0.48949      0.2242     -2.1832     0.23725       -2.0632
+b_life_expectancy                 0.38624      0.2000      1.9314     0.18634        2.0728
+b_suffering                      -0.36658      0.3850     -0.9521     0.52063       -0.7041
+b_disability_cardiovascular      -0.38593      0.1528     -2.5259     0.09328       -4.1374
+b_disability_pulmonary           -0.45737      0.2202     -2.0768     0.22737       -2.0116
+b_disability_renal               -0.33988      0.2138     -1.5900     0.28479       -1.1935
+b_disability_neurological        -0.42190      0.2425     -1.7399     0.39451       -1.0694
+b_disability_gastrointestinal    -0.37901      0.3190     -1.1882     0.28993       -1.3072
+b_family_values                  -2.53310      0.4311     -5.8766     0.56618       -4.4740
 
 
 Overview of choices for MNL model component :
@@ -68,194 +68,470 @@ Percentage chosen when available    48.24    17.65       34.12
 
 
 Classical covariance matrix:
-                                           asc_continue             asc_timelimited
-asc_continue                                    0.42591                     0.41258
-asc_timelimited                                 0.41258                     0.41948
-b_age                                          -0.06740                    -0.06740
-b_frailty                                      -0.04265                    -0.04265
-b_life_expectancy                              -0.06604                    -0.06604
-b_disability_cardiovascular                    -0.05677                    -0.05677
-b_disability_pulmonary                         -0.07590                    -0.07590
-b_family_values                                -0.06516                    -0.06516
-                                                  b_age                   b_frailty
-asc_continue                                  -0.067399                   -0.042647
-asc_timelimited                               -0.067399                   -0.042647
-b_age                                          0.020822                    0.002520
-b_frailty                                      0.002520                    0.022407
-b_life_expectancy                              0.003475                    0.006339
-b_disability_cardiovascular                    0.008292                   3.661e-05
-b_disability_pulmonary                         0.008943                    0.008234
-b_family_values                                0.013244                    0.005019
-                                      b_life_expectancy b_disability_cardiovascular
-asc_continue                                  -0.066045                   -0.056766
-asc_timelimited                               -0.066045                   -0.056766
-b_age                                          0.003475                    0.008292
-b_frailty                                      0.006339                   3.661e-05
-b_life_expectancy                              0.031339                    0.008207
-b_disability_cardiovascular                    0.008207                    0.018080
-b_disability_pulmonary                         0.013204                    0.006542
-b_family_values                                0.001427                    0.001705
-                                 b_disability_pulmonary             b_family_values
-asc_continue                                  -0.075904                   -0.065158
-asc_timelimited                               -0.075904                   -0.065158
-b_age                                          0.008943                    0.013244
-b_frailty                                      0.008234                    0.005019
-b_life_expectancy                              0.013204                    0.001427
-b_disability_cardiovascular                    0.006542                    0.001705
-b_disability_pulmonary                         0.029988                    0.005979
-b_family_values                                0.005979                    0.068725
+                                               asc_continue               asc_timelimited
+asc_continue                                        1.59626                       1.58293
+asc_timelimited                                     1.58293                       1.58982
+b_expected_los                                     -0.03131                      -0.03131
+b_clinical_situation                                0.31586                       0.31586
+b_age                                              -0.14916                      -0.14916
+b_frailty                                          -0.20293                      -0.20293
+b_life_expectancy                                  -0.14656                      -0.14656
+b_suffering                                        -0.34832                      -0.34832
+b_disability_cardiovascular                        -0.11725                      -0.11725
+b_disability_pulmonary                             -0.19941                      -0.19941
+b_disability_renal                                 -0.16998                      -0.16998
+b_disability_neurological                          -0.19427                      -0.19427
+b_disability_gastrointestinal                      -0.24348                      -0.24348
+b_family_values                                    -0.37798                      -0.37798
+                                             b_expected_los          b_clinical_situation
+asc_continue                                      -0.031315                       0.31586
+asc_timelimited                                   -0.031315                       0.31586
+b_expected_los                                     0.066663                   -5.5314e-04
+b_clinical_situation                            -5.5314e-04                       0.18029
+b_age                                              0.001420                      -0.02890
+b_frailty                                       -2.9537e-04                      -0.06105
+b_life_expectancy                                 -0.004097                      -0.01913
+b_suffering                                       -0.001095                      -0.09841
+b_disability_cardiovascular                        0.003195                      -0.01395
+b_disability_pulmonary                            -0.008024                      -0.02480
+b_disability_renal                                 0.002796                      -0.04638
+b_disability_neurological                       -4.7414e-04                      -0.06219
+b_disability_gastrointestinal                     -0.008406                      -0.06686
+b_family_values                                    0.015553                      -0.13539
+                                                      b_age                     b_frailty
+asc_continue                                      -0.149155                     -0.202930
+asc_timelimited                                   -0.149155                     -0.202930
+b_expected_los                                     0.001420                   -2.9537e-04
+b_clinical_situation                              -0.028899                     -0.061049
+b_age                                              0.027956                      0.014831
+b_frailty                                          0.014831                      0.050270
+b_life_expectancy                                  0.009192                      0.016235
+b_suffering                                        0.026754                      0.053768
+b_disability_cardiovascular                        0.012737                      0.006780
+b_disability_pulmonary                             0.017447                      0.023075
+b_disability_renal                                 0.011751                      0.016219
+b_disability_neurological                          0.010704                      0.031715
+b_disability_gastrointestinal                      0.018510                      0.036247
+b_family_values                                    0.037573                      0.057926
+                                          b_life_expectancy                   b_suffering
+asc_continue                                      -0.146564                     -0.348323
+asc_timelimited                                   -0.146564                     -0.348323
+b_expected_los                                    -0.004097                     -0.001095
+b_clinical_situation                              -0.019133                     -0.098414
+b_age                                              0.009192                      0.026754
+b_frailty                                          0.016235                      0.053768
+b_life_expectancy                                  0.039991                      0.024872
+b_suffering                                        0.024872                      0.148242
+b_disability_cardiovascular                        0.013262                      0.009706
+b_disability_pulmonary                             0.024412                      0.040698
+b_disability_renal                                 0.013820                      0.036683
+b_disability_neurological                          0.009745                      0.059752
+b_disability_gastrointestinal                      0.018606                      0.057782
+b_family_values                                    0.016752                      0.095228
+                                b_disability_cardiovascular        b_disability_pulmonary
+asc_continue                                      -0.117245                     -0.199410
+asc_timelimited                                   -0.117245                     -0.199410
+b_expected_los                                     0.003195                     -0.008024
+b_clinical_situation                              -0.013954                     -0.024797
+b_age                                              0.012737                      0.017447
+b_frailty                                          0.006780                      0.023075
+b_life_expectancy                                  0.013262                      0.024412
+b_suffering                                        0.009706                      0.040698
+b_disability_cardiovascular                        0.023345                      0.013424
+b_disability_pulmonary                             0.013424                      0.048501
+b_disability_renal                                 0.011084                      0.019762
+b_disability_neurological                          0.005806                      0.014208
+b_disability_gastrointestinal                      0.016158                      0.031585
+b_family_values                                    0.015063                      0.029935
+                                         b_disability_renal     b_disability_neurological
+asc_continue                                      -0.169981                     -0.194274
+asc_timelimited                                   -0.169981                     -0.194274
+b_expected_los                                     0.002796                   -4.7414e-04
+b_clinical_situation                              -0.046385                     -0.062186
+b_age                                              0.011751                      0.010704
+b_frailty                                          0.016219                      0.031715
+b_life_expectancy                                  0.013820                      0.009745
+b_suffering                                        0.036683                      0.059752
+b_disability_cardiovascular                        0.011084                      0.005806
+b_disability_pulmonary                             0.019762                      0.014208
+b_disability_renal                                 0.045696                      0.025520
+b_disability_neurological                          0.025520                      0.058796
+b_disability_gastrointestinal                      0.025502                      0.022277
+b_family_values                                    0.045171                      0.065106
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                      -0.243480                      -0.37798
+asc_timelimited                                   -0.243480                      -0.37798
+b_expected_los                                    -0.008406                       0.01555
+b_clinical_situation                              -0.066859                      -0.13539
+b_age                                              0.018510                       0.03757
+b_frailty                                          0.036247                       0.05793
+b_life_expectancy                                  0.018606                       0.01675
+b_suffering                                        0.057782                       0.09523
+b_disability_cardiovascular                        0.016158                       0.01506
+b_disability_pulmonary                             0.031585                       0.02993
+b_disability_renal                                 0.025502                       0.04517
+b_disability_neurological                          0.022277                       0.06511
+b_disability_gastrointestinal                      0.101746                       0.05823
+b_family_values                                    0.058229                       0.18580
 
 Robust covariance matrix:
-                                           asc_continue             asc_timelimited
-asc_continue                                   0.169598                    0.154808
-asc_timelimited                                0.154808                    0.177110
-b_age                                         -0.049700                   -0.045456
-b_frailty                                    8.0032e-04                   -0.002653
-b_life_expectancy                             -0.002669                   -0.009493
-b_disability_cardiovascular                   -0.010281                   -0.002193
-b_disability_pulmonary                        -0.001996                    0.003133
-b_family_values                               -0.069572                   -0.084313
-                                                  b_age                   b_frailty
-asc_continue                                  -0.049700                  8.0032e-04
-asc_timelimited                               -0.045456                   -0.002653
-b_age                                          0.032022                   -0.004214
-b_frailty                                     -0.004214                    0.006184
-b_life_expectancy                             -0.013093                    0.003754
-b_disability_cardiovascular                    0.005428                   -0.003627
-b_disability_pulmonary                        -0.009655                  8.7380e-04
-b_family_values                                0.011826                   -0.002516
-                                      b_life_expectancy b_disability_cardiovascular
-asc_continue                                  -0.002669                   -0.010281
-asc_timelimited                               -0.009493                   -0.002193
-b_age                                         -0.013093                    0.005428
-b_frailty                                      0.003754                   -0.003627
-b_life_expectancy                              0.023723                   -0.001797
-b_disability_cardiovascular                   -0.001797                    0.007390
-b_disability_pulmonary                         0.006050                    0.002245
-b_family_values                                0.013061                 -1.0888e-04
-                                 b_disability_pulmonary             b_family_values
-asc_continue                                  -0.001996                   -0.069572
-asc_timelimited                                0.003133                   -0.084313
-b_age                                         -0.009655                    0.011826
-b_frailty                                    8.7380e-04                   -0.002516
-b_life_expectancy                              0.006050                    0.013061
-b_disability_cardiovascular                    0.002245                 -1.0888e-04
-b_disability_pulmonary                         0.017381                   -0.010195
-b_family_values                               -0.010195                    0.094789
+                                               asc_continue               asc_timelimited
+asc_continue                                        2.59497                       2.64295
+asc_timelimited                                     2.64295                       2.72803
+b_expected_los                                     -0.11929                      -0.12294
+b_clinical_situation                                0.60501                       0.62531
+b_age                                              -0.14704                      -0.14826
+b_frailty                                          -0.34628                      -0.35683
+b_life_expectancy                                  -0.13498                      -0.14625
+b_suffering                                        -0.78546                      -0.80924
+b_disability_cardiovascular                        -0.07334                      -0.06859
+b_disability_pulmonary                             -0.22646                      -0.22858
+b_disability_renal                                 -0.38617                      -0.39958
+b_disability_neurological                          -0.49723                      -0.50361
+b_disability_gastrointestinal                      -0.36482                      -0.37379
+b_family_values                                    -0.80998                      -0.84244
+                                             b_expected_los          b_clinical_situation
+asc_continue                                      -0.119291                       0.60501
+asc_timelimited                                   -0.122940                       0.62531
+b_expected_los                                     0.040822                      -0.02472
+b_clinical_situation                              -0.024718                       0.19950
+b_age                                             -0.005312                      -0.03560
+b_frailty                                          0.020096                      -0.09369
+b_life_expectancy                                  0.009642                      -0.02440
+b_suffering                                        0.023113                      -0.19600
+b_disability_cardiovascular                     -9.9528e-04                      -0.01880
+b_disability_pulmonary                            -0.009210                      -0.04969
+b_disability_renal                                 0.028190                      -0.10821
+b_disability_neurological                          0.053995                      -0.12932
+b_disability_gastrointestinal                     -0.003208                      -0.08272
+b_family_values                                    0.033715                      -0.21274
+                                                      b_age                     b_frailty
+asc_continue                                      -0.147045                     -0.346279
+asc_timelimited                                   -0.148261                     -0.356827
+b_expected_los                                    -0.005312                      0.020096
+b_clinical_situation                              -0.035599                     -0.093693
+b_age                                              0.041967                      0.011222
+b_frailty                                          0.011222                      0.056290
+b_life_expectancy                                 -0.009119                      0.015522
+b_suffering                                        0.045503                      0.109897
+b_disability_cardiovascular                        0.006856                      0.006189
+b_disability_pulmonary                           8.4025e-04                      0.028781
+b_disability_renal                                 0.012911                      0.055121
+b_disability_neurological                          0.008248                      0.082300
+b_disability_gastrointestinal                      0.017577                      0.044495
+b_family_values                                    0.050129                      0.111202
+                                          b_life_expectancy                   b_suffering
+asc_continue                                      -0.134979                      -0.78546
+asc_timelimited                                   -0.146246                      -0.80924
+b_expected_los                                     0.009642                       0.02311
+b_clinical_situation                              -0.024396                      -0.19600
+b_age                                             -0.009119                       0.04550
+b_frailty                                          0.015522                       0.10990
+b_life_expectancy                                  0.034723                       0.02596
+b_suffering                                        0.025962                       0.27105
+b_disability_cardiovascular                        0.005745                       0.01773
+b_disability_pulmonary                             0.023280                       0.07256
+b_disability_renal                                 0.033087                       0.10388
+b_disability_neurological                          0.017249                       0.15193
+b_disability_gastrointestinal                      0.023885                       0.12399
+b_family_values                                    0.048028                       0.25838
+                                b_disability_cardiovascular        b_disability_pulmonary
+asc_continue                                      -0.073344                     -0.226457
+asc_timelimited                                   -0.068594                     -0.228585
+b_expected_los                                  -9.9528e-04                     -0.009210
+b_clinical_situation                              -0.018796                     -0.049694
+b_age                                              0.006856                    8.4025e-04
+b_frailty                                          0.006189                      0.028781
+b_life_expectancy                                  0.005745                      0.023280
+b_suffering                                        0.017730                      0.072560
+b_disability_cardiovascular                        0.008701                      0.010387
+b_disability_pulmonary                             0.010387                      0.051696
+b_disability_renal                                 0.012617                      0.033967
+b_disability_neurological                          0.009038                      0.025810
+b_disability_gastrointestinal                      0.012792                      0.053798
+b_family_values                                    0.019745                      0.054902
+                                         b_disability_renal     b_disability_neurological
+asc_continue                                       -0.38617                     -0.497234
+asc_timelimited                                    -0.39958                     -0.503614
+b_expected_los                                      0.02819                      0.053995
+b_clinical_situation                               -0.10821                     -0.129316
+b_age                                               0.01291                      0.008248
+b_frailty                                           0.05512                      0.082300
+b_life_expectancy                                   0.03309                      0.017249
+b_suffering                                         0.10388                      0.151931
+b_disability_cardiovascular                         0.01262                      0.009038
+b_disability_pulmonary                              0.03397                      0.025810
+b_disability_renal                                  0.08110                      0.079509
+b_disability_neurological                           0.07951                      0.155636
+b_disability_gastrointestinal                       0.04816                      0.043313
+b_family_values                                     0.11963                      0.147895
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                      -0.364819                      -0.80998
+asc_timelimited                                   -0.373787                      -0.84244
+b_expected_los                                    -0.003208                       0.03372
+b_clinical_situation                              -0.082720                      -0.21274
+b_age                                              0.017577                       0.05013
+b_frailty                                          0.044495                       0.11120
+b_life_expectancy                                  0.023885                       0.04803
+b_suffering                                        0.123985                       0.25838
+b_disability_cardiovascular                        0.012792                       0.01974
+b_disability_pulmonary                             0.053798                       0.05490
+b_disability_renal                                 0.048162                       0.11963
+b_disability_neurological                          0.043313                       0.14790
+b_disability_gastrointestinal                      0.084062                       0.11770
+b_family_values                                    0.117704                       0.32056
 
 Classical correlation matrix:
-                                           asc_continue             asc_timelimited
-asc_continue                                     1.0000                      0.9761
-asc_timelimited                                  0.9761                      1.0000
-b_age                                           -0.7157                     -0.7212
-b_frailty                                       -0.4366                     -0.4399
-b_life_expectancy                               -0.5717                     -0.5760
-b_disability_cardiovascular                     -0.6469                     -0.6518
-b_disability_pulmonary                          -0.6716                     -0.6768
-b_family_values                                 -0.3808                     -0.3838
-                                                  b_age                   b_frailty
-asc_continue                                    -0.7157                   -0.436557
-asc_timelimited                                 -0.7212                   -0.439893
-b_age                                            1.0000                    0.116689
-b_frailty                                        0.1167                    1.000000
-b_life_expectancy                                0.1361                    0.239203
-b_disability_cardiovascular                      0.4274                    0.001819
-b_disability_pulmonary                           0.3579                    0.317644
-b_family_values                                  0.3501                    0.127887
-                                      b_life_expectancy b_disability_cardiovascular
-asc_continue                                   -0.57166                   -0.646891
-asc_timelimited                                -0.57603                   -0.651835
-b_age                                           0.13605                    0.427385
-b_frailty                                       0.23920                    0.001819
-b_life_expectancy                               1.00000                    0.344784
-b_disability_cardiovascular                     0.34478                    1.000000
-b_disability_pulmonary                          0.43070                    0.280962
-b_family_values                                 0.03074                    0.048357
-                                 b_disability_pulmonary             b_family_values
-asc_continue                                    -0.6716                    -0.38085
-asc_timelimited                                 -0.6768                    -0.38376
-b_age                                            0.3579                     0.35011
-b_frailty                                        0.3176                     0.12789
-b_life_expectancy                                0.4307                     0.03074
-b_disability_cardiovascular                      0.2810                     0.04836
-b_disability_pulmonary                           1.0000                     0.13171
-b_family_values                                  0.1317                     1.00000
+                                               asc_continue               asc_timelimited
+asc_continue                                        1.00000                       0.99365
+asc_timelimited                                     0.99365                       1.00000
+b_expected_los                                     -0.09600                      -0.09619
+b_clinical_situation                                0.58879                       0.58998
+b_age                                              -0.70607                      -0.70750
+b_frailty                                          -0.71637                      -0.71782
+b_life_expectancy                                  -0.58009                      -0.58126
+b_suffering                                        -0.71605                      -0.71750
+b_disability_cardiovascular                        -0.60736                      -0.60859
+b_disability_pulmonary                             -0.71667                      -0.71812
+b_disability_renal                                 -0.62938                      -0.63065
+b_disability_neurological                          -0.63414                      -0.63543
+b_disability_gastrointestinal                      -0.60416                      -0.60538
+b_family_values                                    -0.69405                      -0.69545
+                                             b_expected_los          b_clinical_situation
+asc_continue                                      -0.095996                      0.588787
+asc_timelimited                                   -0.096191                      0.589978
+b_expected_los                                     1.000000                     -0.005045
+b_clinical_situation                              -0.005045                      1.000000
+b_age                                              0.032900                     -0.407061
+b_frailty                                         -0.005102                     -0.641266
+b_life_expectancy                                 -0.079353                     -0.225326
+b_suffering                                       -0.011012                     -0.601979
+b_disability_cardiovascular                        0.081002                     -0.215085
+b_disability_pulmonary                            -0.141116                     -0.265178
+b_disability_renal                                 0.050655                     -0.511033
+b_disability_neurological                         -0.007573                     -0.603990
+b_disability_gastrointestinal                     -0.102072                     -0.493643
+b_family_values                                    0.139745                     -0.739717
+                                                      b_age                     b_frailty
+asc_continue                                       -0.70607                     -0.716375
+asc_timelimited                                    -0.70750                     -0.717824
+b_expected_los                                      0.03290                     -0.005102
+b_clinical_situation                               -0.40706                     -0.641266
+b_age                                               1.00000                      0.395609
+b_frailty                                           0.39561                      1.000000
+b_life_expectancy                                   0.27491                      0.362098
+b_suffering                                         0.41559                      0.622859
+b_disability_cardiovascular                         0.49858                      0.197915
+b_disability_pulmonary                              0.47382                      0.467315
+b_disability_renal                                  0.32879                      0.338401
+b_disability_neurological                           0.26401                      0.583363
+b_disability_gastrointestinal                       0.34707                      0.506823
+b_family_values                                     0.52132                      0.599365
+                                          b_life_expectancy                   b_suffering
+asc_continue                                       -0.58009                      -0.71605
+asc_timelimited                                    -0.58126                      -0.71750
+b_expected_los                                     -0.07935                      -0.01101
+b_clinical_situation                               -0.22533                      -0.60198
+b_age                                               0.27491                       0.41559
+b_frailty                                           0.36210                       0.62286
+b_life_expectancy                                   1.00000                       0.32303
+b_suffering                                         0.32303                       1.00000
+b_disability_cardiovascular                         0.43405                       0.16499
+b_disability_pulmonary                              0.55431                       0.47996
+b_disability_renal                                  0.32329                       0.44570
+b_disability_neurological                           0.20097                       0.64002
+b_disability_gastrointestinal                       0.29169                       0.47049
+b_family_values                                     0.19434                       0.57379
+                                b_disability_cardiovascular        b_disability_pulmonary
+asc_continue                                       -0.60736                       -0.7167
+asc_timelimited                                    -0.60859                       -0.7181
+b_expected_los                                      0.08100                       -0.1411
+b_clinical_situation                               -0.21509                       -0.2652
+b_age                                               0.49858                        0.4738
+b_frailty                                           0.19791                        0.4673
+b_life_expectancy                                   0.43405                        0.5543
+b_suffering                                         0.16499                        0.4800
+b_disability_cardiovascular                         1.00000                        0.3990
+b_disability_pulmonary                              0.39895                        1.0000
+b_disability_renal                                  0.33935                        0.4198
+b_disability_neurological                           0.15671                        0.2661
+b_disability_gastrointestinal                       0.33154                        0.4496
+b_family_values                                     0.22872                        0.3153
+                                         b_disability_renal     b_disability_neurological
+asc_continue                                       -0.62938                     -0.634143
+asc_timelimited                                    -0.63065                     -0.635426
+b_expected_los                                      0.05065                     -0.007573
+b_clinical_situation                               -0.51103                     -0.603990
+b_age                                               0.32879                      0.264010
+b_frailty                                           0.33840                      0.583363
+b_life_expectancy                                   0.32329                      0.200965
+b_suffering                                         0.44570                      0.640018
+b_disability_cardiovascular                         0.33935                      0.156707
+b_disability_pulmonary                              0.41979                      0.266065
+b_disability_renal                                  1.00000                      0.492344
+b_disability_neurological                           0.49234                      1.000000
+b_disability_gastrointestinal                       0.37401                      0.288026
+b_family_values                                     0.49022                      0.622897
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                        -0.6042                       -0.6940
+asc_timelimited                                     -0.6054                       -0.6955
+b_expected_los                                      -0.1021                        0.1397
+b_clinical_situation                                -0.4936                       -0.7397
+b_age                                                0.3471                        0.5213
+b_frailty                                            0.5068                        0.5994
+b_life_expectancy                                    0.2917                        0.1943
+b_suffering                                          0.4705                        0.5738
+b_disability_cardiovascular                          0.3315                        0.2287
+b_disability_pulmonary                               0.4496                        0.3153
+b_disability_renal                                   0.3740                        0.4902
+b_disability_neurological                            0.2880                        0.6229
+b_disability_gastrointestinal                        1.0000                        0.4235
+b_family_values                                      0.4235                        1.0000
 
 Robust correlation matrix:
-                                           asc_continue             asc_timelimited
-asc_continue                                    1.00000                     0.89323
-asc_timelimited                                 0.89323                     1.00000
-b_age                                          -0.67440                    -0.60360
-b_frailty                                       0.02471                    -0.08015
-b_life_expectancy                              -0.04208                    -0.14645
-b_disability_cardiovascular                    -0.29039                    -0.06063
-b_disability_pulmonary                         -0.03677                     0.05647
-b_family_values                                -0.54871                    -0.65072
-                                                  b_age                   b_frailty
-asc_continue                                    -0.6744                     0.02471
-asc_timelimited                                 -0.6036                    -0.08015
-b_age                                            1.0000                    -0.29945
-b_frailty                                       -0.2994                     1.00000
-b_life_expectancy                               -0.4750                     0.30990
-b_disability_cardiovascular                      0.3528                    -0.53648
-b_disability_pulmonary                          -0.4093                     0.08428
-b_family_values                                  0.2146                    -0.10391
-                                      b_life_expectancy b_disability_cardiovascular
-asc_continue                                   -0.04208                   -0.290388
-asc_timelimited                                -0.14645                   -0.060627
-b_age                                          -0.47503                    0.352848
-b_frailty                                       0.30990                   -0.536481
-b_life_expectancy                               1.00000                   -0.135717
-b_disability_cardiovascular                    -0.13572                    1.000000
-b_disability_pulmonary                          0.29792                    0.198073
-b_family_values                                 0.27543                   -0.004114
-                                 b_disability_pulmonary             b_family_values
-asc_continue                                   -0.03677                   -0.548711
-asc_timelimited                                 0.05647                   -0.650719
-b_age                                          -0.40926                    0.214642
-b_frailty                                       0.08428                   -0.103906
-b_life_expectancy                               0.29792                    0.275428
-b_disability_cardiovascular                     0.19807                   -0.004114
-b_disability_pulmonary                          1.00000                   -0.251184
-b_family_values                                -0.25118                    1.000000
+                                               asc_continue               asc_timelimited
+asc_continue                                         1.0000                        0.9933
+asc_timelimited                                      0.9933                        1.0000
+b_expected_los                                      -0.3665                       -0.3684
+b_clinical_situation                                 0.8409                        0.8476
+b_age                                               -0.4456                       -0.4382
+b_frailty                                           -0.9060                       -0.9106
+b_life_expectancy                                   -0.4497                       -0.4752
+b_suffering                                         -0.9365                       -0.9411
+b_disability_cardiovascular                         -0.4881                       -0.4452
+b_disability_pulmonary                              -0.6183                       -0.6087
+b_disability_renal                                  -0.8418                       -0.8495
+b_disability_neurological                           -0.7824                       -0.7729
+b_disability_gastrointestinal                       -0.7811                       -0.7805
+b_family_values                                     -0.8881                       -0.9009
+                                             b_expected_los          b_clinical_situation
+asc_continue                                       -0.36652                        0.8409
+asc_timelimited                                    -0.36840                        0.8476
+b_expected_los                                      1.00000                       -0.2739
+b_clinical_situation                               -0.27390                        1.0000
+b_age                                              -0.12834                       -0.3891
+b_frailty                                           0.41922                       -0.8841
+b_life_expectancy                                   0.25611                       -0.2931
+b_suffering                                         0.21973                       -0.8429
+b_disability_cardiovascular                        -0.05281                       -0.4511
+b_disability_pulmonary                             -0.20049                       -0.4893
+b_disability_renal                                  0.48991                       -0.8507
+b_disability_neurological                           0.67741                       -0.7339
+b_disability_gastrointestinal                      -0.05477                       -0.6388
+b_family_values                                     0.29473                       -0.8413
+                                                      b_age                     b_frailty
+asc_continue                                       -0.44558                       -0.9060
+asc_timelimited                                    -0.43817                       -0.9106
+b_expected_los                                     -0.12834                        0.4192
+b_clinical_situation                               -0.38905                       -0.8841
+b_age                                               1.00000                        0.2309
+b_frailty                                           0.23089                        1.0000
+b_life_expectancy                                  -0.23887                        0.3511
+b_suffering                                         0.42664                        0.8897
+b_disability_cardiovascular                         0.35880                        0.2796
+b_disability_pulmonary                              0.01804                        0.5335
+b_disability_renal                                  0.22131                        0.8158
+b_disability_neurological                           0.10206                        0.8793
+b_disability_gastrointestinal                       0.29592                        0.6468
+b_family_values                                     0.43219                        0.8278
+                                          b_life_expectancy                   b_suffering
+asc_continue                                        -0.4497                       -0.9365
+asc_timelimited                                     -0.4752                       -0.9411
+b_expected_los                                       0.2561                        0.2197
+b_clinical_situation                                -0.2931                       -0.8429
+b_age                                               -0.2389                        0.4266
+b_frailty                                            0.3511                        0.8897
+b_life_expectancy                                    1.0000                        0.2676
+b_suffering                                          0.2676                        1.0000
+b_disability_cardiovascular                          0.3305                        0.3651
+b_disability_pulmonary                               0.5495                        0.6130
+b_disability_renal                                   0.6235                        0.7007
+b_disability_neurological                            0.2346                        0.7397
+b_disability_gastrointestinal                        0.4421                        0.8214
+b_family_values                                      0.4552                        0.8765
+                                b_disability_cardiovascular        b_disability_pulmonary
+asc_continue                                       -0.48811                      -0.61829
+asc_timelimited                                    -0.44522                      -0.60869
+b_expected_los                                     -0.05281                      -0.20049
+b_clinical_situation                               -0.45113                      -0.48933
+b_age                                               0.35880                       0.01804
+b_frailty                                           0.27964                       0.53354
+b_life_expectancy                                   0.33052                       0.54948
+b_suffering                                         0.36508                       0.61297
+b_disability_cardiovascular                         1.00000                       0.48974
+b_disability_pulmonary                              0.48974                       1.00000
+b_disability_renal                                  0.47497                       0.52458
+b_disability_neurological                           0.24559                       0.28774
+b_disability_gastrointestinal                       0.47299                       0.81609
+b_family_values                                     0.37386                       0.42649
+                                         b_disability_renal     b_disability_neurological
+asc_continue                                        -0.8418                       -0.7824
+asc_timelimited                                     -0.8495                       -0.7729
+b_expected_los                                       0.4899                        0.6774
+b_clinical_situation                                -0.8507                       -0.7339
+b_age                                                0.2213                        0.1021
+b_frailty                                            0.8158                        0.8793
+b_life_expectancy                                    0.6235                        0.2346
+b_suffering                                          0.7007                        0.7397
+b_disability_cardiovascular                          0.4750                        0.2456
+b_disability_pulmonary                               0.5246                        0.2877
+b_disability_renal                                   1.0000                        0.7077
+b_disability_neurological                            0.7077                        1.0000
+b_disability_gastrointestinal                        0.5833                        0.3787
+b_family_values                                      0.7419                        0.6621
+                              b_disability_gastrointestinal               b_family_values
+asc_continue                                       -0.78111                       -0.8881
+asc_timelimited                                    -0.78055                       -0.9009
+b_expected_los                                     -0.05477                        0.2947
+b_clinical_situation                               -0.63876                       -0.8413
+b_age                                               0.29592                        0.4322
+b_frailty                                           0.64684                        0.8278
+b_life_expectancy                                   0.44210                        0.4552
+b_suffering                                         0.82138                        0.8765
+b_disability_cardiovascular                         0.47299                        0.3739
+b_disability_pulmonary                              0.81609                        0.4265
+b_disability_renal                                  0.58329                        0.7419
+b_disability_neurological                           0.37867                        0.6621
+b_disability_gastrointestinal                       1.00000                        0.7170
+b_family_values                                     0.71703                        1.0000
 
  17 most extreme outliers in terms of lowest average per choice prediction:
    ID Avg prob per choice
- 4741           0.3583768
- 4747           0.3586560
- 4749           0.3849737
- 4755           0.3928868
- 4748           0.3972035
- 4732           0.3991470
- 4758           0.3994830
- 4739           0.4246278
- 4737           0.4377766
- 4742           0.4465445
- 4736           0.4511235
- 4750           0.4736754
- 4753           0.4851694
- 4746           0.4883209
- 4738           0.5142963
- 4757           0.5181565
- 4759           0.5236852
+ 4747           0.3549869
+ 4741           0.3607214
+ 4749           0.3904881
+ 4748           0.4016195
+ 4755           0.4065405
+ 4758           0.4070162
+ 4732           0.4198278
+ 4736           0.4223142
+ 4739           0.4305609
+ 4742           0.4483328
+ 4737           0.4606435
+ 4750           0.4644669
+ 4746           0.4826959
+ 4753           0.4869381
+ 4757           0.5137284
+ 4738           0.5159571
+ 4759           0.5308501
 
 Changes in parameter estimates from starting values:
                                   Initial    Estimate  Difference
-asc_continue                        0.000      2.0838      2.0838
-asc_withdraw                        0.000      0.0000      0.0000
-asc_timelimited                     0.000      2.7431      2.7431
-b_expected_los                      0.000      0.0000      0.0000
-b_clinical_situation                0.000      0.0000      0.0000
-b_age                               0.000     -1.1428     -1.1428
-b_frailty                           0.000     -0.2071     -0.2071
-b_life_expectancy                   0.000      0.5150      0.5150
-b_suffering                         0.000      0.0000      0.0000
-b_disability_cardiovascular         0.000     -0.2924     -0.2924
-b_disability_pulmonary              0.000     -0.3196     -0.3196
-b_disability_renal                  0.000      0.0000      0.0000
-b_disability_neurological           0.000      0.0000      0.0000
-b_disability_gastrointestinal       0.000      0.0000      0.0000
-b_family_values                     0.000     -1.9227     -1.9227
+asc_continue                        0.000     3.76962     3.76962
+asc_withdraw                        0.000     0.00000     0.00000
+asc_timelimited                     0.000     4.42887     4.42887
+b_expected_los                      0.000     0.09700     0.09700
+b_clinical_situation                0.000     0.80197     0.80197
+b_age                               0.000    -1.24461    -1.24461
+b_frailty                           0.000    -0.48949    -0.48949
+b_life_expectancy                   0.000     0.38624     0.38624
+b_suffering                         0.000    -0.36658    -0.36658
+b_disability_cardiovascular         0.000    -0.38593    -0.38593
+b_disability_pulmonary              0.000    -0.45737    -0.45737
+b_disability_renal                  0.000    -0.33988    -0.33988
+b_disability_neurological           0.000    -0.42190    -0.42190
+b_disability_gastrointestinal       0.000    -0.37901    -0.37901
+b_family_values                     0.000    -2.53310    -2.53310
 
 Settings and functions used in model definition:
 
@@ -290,15 +566,21 @@ numerical jacobian of LL analytical gradient
 
 Scaling used in computing Hessian
 ---------------------------------
-                                Value
-asc_continue                2.0838309
-asc_timelimited             2.7430773
-b_age                       1.1427780
-b_frailty                   0.2071087
-b_life_expectancy           0.5149749
-b_disability_cardiovascular 0.2923504
-b_disability_pulmonary      0.3196232
-b_family_values             1.9226898
+                                  Value
+asc_continue                  3.7696220
+asc_timelimited               4.4288677
+b_expected_los                0.0970050
+b_clinical_situation          0.8019659
+b_age                         1.2446082
+b_frailty                     0.4894945
+b_life_expectancy             0.3862401
+b_suffering                   0.3665784
+b_disability_cardiovascular   0.3859322
+b_disability_pulmonary        0.4573740
+b_disability_renal            0.3398805
+b_disability_neurological     0.4219000
+b_disability_gastrointestinal 0.3790104
+b_family_values               2.5331030
 
 
 apollo_probabilities
@@ -363,5 +645,4 @@ function(apollo_beta, apollo_inputs, functionality="estimate"){
       P = apollo_prepareProb(P, apollo_inputs, functionality)
       return(P)
     }
-<bytecode: 0x0000018286e648c8>
-<environment: 0x000001828d1d00a0>
+<environment: 0x000002431f36d608>
