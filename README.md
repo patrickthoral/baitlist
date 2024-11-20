@@ -12,7 +12,8 @@ renv::init()
 # install individual packages
 # install.packages("tidyverse")
 # install.packages("apollo")
-# install.packages("readxl") 
+# install.packages("readxl")
+# install.packages("svglite") 
 
 # Snapshot after changes
 # renv::snapshot()
@@ -39,8 +40,10 @@ usethis::create_package("baitlist")
 
 # Add dependencies
 usethis::use_package("dplyr")
+usethis::use_package("tidyr")
 usethis::use_package("readxl")
 usethis::use_package("apollo")
+usethis::use_package("ggplot2")
 
 # Update documentation
 devtools::document()
@@ -68,6 +71,10 @@ baitlist::maximum_utility_contribution()
 
 # Compare model weights between models using Wald test
 baitlist::compare_models()
+
+# Create tables and figures
+baitlist::criteria_table()
+baitlist::plot_relative_importance()
 
 ```
 
