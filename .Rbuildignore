@@ -2,4 +2,7 @@
 ^renv\.lock$
 ^baitlist\.Rproj$
 ^\.Rproj\.user$
+^\.git$
+^\.idea$
+^\.venv$
 ^LICENSE\.md$

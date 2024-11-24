@@ -1,6 +1,6 @@
 Package: baitlist
 Title: Behavioural Artificial Intelligence Technology for Life Sustaining Therapy (BAITLiST)
-Version: 0.0.0.9000
+Version: 0.3.0.0000
 Authors@R: 
     person("Patrick", "Thoral", , "p.thoral@amsterdamumc.nl", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6140-7195"))
@@ -13,7 +13,10 @@ Imports:
     apollo,
     dplyr,
     ggplot2,
+    ggsignif,
+    magrittr,
     readxl,
+    rlang,
     tidyr
 Suggests: 
     testthat (>= 3.0.0)

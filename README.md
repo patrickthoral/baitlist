@@ -13,7 +13,8 @@ renv::init()
 # install.packages("tidyverse")
 # install.packages("apollo")
 # install.packages("readxl")
-# install.packages("svglite") 
+# install.packages("svglite")
+# install.packages("ggsignif")
 
 # Snapshot after changes
 # renv::snapshot()
@@ -39,11 +40,15 @@ devtools::dev_sitrep()
 usethis::create_package("baitlist")
 
 # Add dependencies
+usethis::use_package("rlang")
 usethis::use_package("dplyr")
 usethis::use_package("tidyr")
 usethis::use_package("readxl")
 usethis::use_package("apollo")
 usethis::use_package("ggplot2")
+usethis::use_package("ggsignif")
+usethis::use_package("magrittr")
+usethis::use_package("here")
 
 # Update documentation
 devtools::document()
@@ -75,6 +80,7 @@ baitlist::compare_models()
 # Create tables and figures
 baitlist::criteria_table()
 baitlist::plot_relative_importance()
+baitlist::plot_group_comparison()
 
 ```
 
