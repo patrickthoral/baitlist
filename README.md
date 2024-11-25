@@ -15,6 +15,7 @@ renv::init()
 # install.packages("readxl")
 # install.packages("svglite")
 # install.packages("ggsignif")
+# install.packages("gt")
 
 # Snapshot after changes
 # renv::snapshot()
@@ -47,8 +48,8 @@ usethis::use_package("readxl")
 usethis::use_package("apollo")
 usethis::use_package("ggplot2")
 usethis::use_package("ggsignif")
+usethis::use_package("gt")
 usethis::use_package("magrittr")
-usethis::use_package("here")
 
 # Update documentation
 devtools::document()
@@ -78,7 +79,8 @@ baitlist::maximum_utility_contribution()
 baitlist::compare_models()
 
 # Create tables and figures
-baitlist::criteria_table()
+baitlist::create_criteria_table()
+baitlist::create_model_weights_tables()
 baitlist::plot_relative_importance()
 baitlist::plot_group_comparison()
 
