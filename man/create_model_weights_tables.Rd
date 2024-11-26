@@ -11,7 +11,8 @@ gt table of last model
 }
 \description{
 Displays the model weights, constant, Null log-likelihood and estimated model log-likelihood and
-adjusted rho-squared of the different models. Saves the table as \code{data/tables/model_weights_<.csv}.
+adjusted rho-squared of the different models. Saves the table as \verb{data/tables/model_weights_<group>.html} using the
+gt package.
 }
 \examples{
 create_model_weights_tables()

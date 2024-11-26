@@ -3,6 +3,7 @@
 export(coefficient_to_variable)
 export(compare_models)
 export(create_criteria_table)
+export(create_group_comparison_table)
 export(create_model_weights_tables)
 export(fit_bait_binary)
 export(fit_bait_multinomial)
