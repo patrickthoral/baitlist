@@ -2,7 +2,7 @@
 % Please edit documentation in R/tables.R
 \name{create_group_comparison_table}
 \alias{create_group_comparison_table}
-\title{Create table for group comparison of coefficient weights}
+\title{Create group comparison table}
 \usage{
 create_group_comparison_table()
 }
@@ -10,8 +10,8 @@ create_group_comparison_table()
 gt table
 }
 \description{
-Creates table with coefficients weights and significance levels comparing both groups using the Wald test.
-Saves the table in as \verb{data/tables/model_weights_<group>.csv}.
+Creates table comparing coefficients weights with both groups using the Wald test.
+Saves the table as \code{data/tables/table_group_comparison.html}.
 }
 \examples{
 create_group_comparison_table()

@@ -221,10 +221,10 @@ create_model_weights_tables <- function() {
 
 }
 
-#' Create table for group comparison of coefficient weights
+#' Create group comparison table
 #'
-#' Creates table with coefficients weights and significance levels comparing both groups using the Wald test.
-#' Saves the table in as `data/tables/model_weights_<group>.csv`.
+#' Creates table comparing coefficients weights with both groups using the Wald test.
+#' Saves the table as `data/tables/table_group_comparison.html`.
 #' @return
 #' gt table
 #' @export
@@ -245,12 +245,14 @@ create_group_comparison_table <- function() {
   # create a vectorized version of function to allow using in dplyr functions
   coefficient_to_variable_V <- Vectorize(coefficient_to_variable)
 
+  df_wald <- tibble::tibble()
+
   for(title in names(comparisons)) {
-    cat(paste0("Comparing: ", title, "\n" ))
     comparison <- comparisons[[title]]
     groups <- comparison[['groups']]
     group1 <- groups[[1]]
     group2 <- groups[[2]]
+    group_col <- paste(groups, collapse="_")
 
     group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
     group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
@@ -317,82 +319,143 @@ create_group_comparison_table <- function() {
         )
       ) %>%
         dplyr::mutate(
-          f_wald = formatC(wald, digits = 3, format = "fg")
+          f_wald = formatC(wald, digits = 3, format = "fg"),
+          group_col = group_col
         )
 
-    table <- wald %>%
+    # only keep needed columns
+    wald <- wald %>%
       dplyr::select(
         name,
         f_wald,  # use pre-formatted columns
         f_p_value, # use pre-formatted columns
         annotation,
-        type
-      ) %>%
-      dplyr::group_by(type) %>%
-      dplyr::arrange(factor(type, levels = c("Criteria", "Constant"))) %>%
-      gt::gt() %>%
-      gt::tab_row_group(
-        label = "",
-        rows = type == 'Constant',
-        id = "group_constant"
-      ) %>%
-      gt::tab_row_group(
-        label = "",
-        rows = type == 'Criteria',
-        id = "group_criteria"
-      ) %>%
-      gt::row_group_order(
-        groups = c("group_criteria", "group_constant")
-      ) %>%
-      gt::cols_align(
-        align = "right",
-        columns = f_p_value
-      ) %>%
-      gt::cols_align(
-        align = "center",
-        columns = f_wald
-      ) %>%
-      gt::cols_label(
-        name = "Criteria",
-        f_wald = gt::md("Wald statistic"),
-        f_p_value = gt::md("<i>p</i> value")
-      ) %>%
-      # DOES NOT function correctly: use formatting in tibble before feeding to gt
-      # gt::fmt_number(decimals = 3, drop_trailing_zeros = TRUE, columns = c(wald, p_value)) %>%
-      gt::tab_header(
-        title = gt::md(paste0("*", title, "*"))
-      ) %>%
-      gt::tab_style(
-        style = list(
-          gt::cell_text(weight = "bold")
+        type,
+        group_col
+      )
+
+    # merge/concatenate tibbles
+    df_wald <- df_wald %>%
+      dplyr::bind_rows(wald)
+  }
+
+  df_wald <- df_wald %>%
+    tidyr::pivot_wider(
+      names_from = c("group_col"),
+      names_sep = ":",
+      values_from = c("f_wald", "f_p_value", "annotation")
+    )
+
+  table <- df_wald %>%
+    dplyr::group_by(type) %>%
+    dplyr::arrange(factor(type, levels = c("Criteria", "Constant"))) %>%
+    gt::gt() %>%
+    gt::tab_row_group(
+      label = "",
+      rows = type == 'Constant',
+      id = "group_constant"
+    ) %>%
+    gt::tab_row_group(
+      label = "",
+      rows = type == 'Criteria',
+      id = "group_criteria"
+    ) %>%
+    gt::row_group_order(
+      groups = c("group_criteria", "group_constant")
+    ) %>%
+    gt::cols_align(
+      align = "right",
+      columns = gt::starts_with("f_p_value")
+    ) %>%
+    gt::cols_align(
+      align = "center",
+      columns = gt::starts_with("f_wald")
+    ) %>%
+    gt::cols_label(
+      name = "Criteria",
+      gt::starts_with("f_wald") ~ gt::md("Wald statistic"),
+      gt::starts_with("f_p_value") ~ gt::md("<i>p</i> value")
+    ) %>%
+    # DOES NOT function correctly: use formatting in tibble before feeding to gt
+    # gt::fmt_number(decimals = 3, drop_trailing_zeros = TRUE, columns = c(wald, p_value)) %>%
+    gt::tab_header(
+      title = gt::md(paste0("**Subgroup comparison**"))
+    ) %>%
+    gt::opt_align_table_header(align = "left") %>%
+    gt::tab_style(
+      style = list(
+        gt::cell_text(weight = "bold")
+      ),
+      location = list(
+        gt::cells_column_labels(
+          columns = dplyr::everything()
         ),
-        location = list(
-          gt::cells_column_labels(
-            columns = dplyr::everything()
-          ),
-          gt::cells_row_groups()
-        )
+        gt::cells_row_groups()
+      )
+    )
+
+  # create spanners for each comparison
+  for(title in names(comparisons)) {
+    comparison <- comparisons[[title]]
+    groups <- comparison[['groups']]
+    group_col <- paste(groups, collapse="_")
+
+    table <- table %>%
+      gt::tab_spanner(
+        id = paste0("spanner_", group_col),
+        label = title,
+        columns = gt::ends_with(group_col)
       ) %>%
       # add asterisks to Wald if significant
       gt::cols_merge(
-        columns = c(f_wald, annotation),
+        columns = c(paste0("f_wald:", group_col), paste0("annotation:", group_col)),
         pattern = "{1}<<{2}>>"
-      ) %>%
-      gt::tab_options(
-        data_row.padding = gt::px(2)
-      ) %>%
-      gt::cols_width(
-        name ~ px(400),
-        everything() ~ gt::px(100)
-      ) %>%
-      gt::tab_footnote(
-        footnote = gt::md("&ast; *p* < 0.05; &ast;&ast; *p* < 0.01; &ast;&ast;&ast; *p* < 0.001")
-        )
-
-    table %>%
-      gt::gtsave(filename = paste0("./data/tables/", "group_comparison_",  paste(groups, collapse="_"), ".html"))
-
+      )
   }
+
+  # create significance footnote based on actual annotations
+  annotations <- df_wald %>%
+    dplyr::select(dplyr::starts_with("annotation"))
+
+  footnotes_needed <- c()
+  for(col in colnames(annotations)) {
+    footnotes_needed <- c(
+      footnotes_needed,
+      annotations[col] %>%
+        tidyr::drop_na() %>%
+        unique() %>%
+        dplyr::pull()
+
+    )
+  }
+
+  footnotes_needed <- unique(footnotes_needed)
+  footnotes <- c()
+  if("*" %in% footnotes_needed) {
+    footnotes <- c(footnotes, "&ast; *p* < 0.05")
+  }
+  if("**" %in% footnotes_needed) {
+    footnotes <- c(footnotes, "&ast;&ast; *p* < 0.01")
+  }
+  if("***" %in% footnotes_needed) {
+    footnotes <- c(footnotes, "&ast;&ast;&ast; *p* < 0.001")
+  }
+
+  # add footnotes to table and set column widths
+  table <- table %>%
+    gt::tab_options(
+      data_row.padding = gt::px(2)
+    ) %>%
+    gt::cols_width(
+      name ~ px(400),
+      everything() ~ gt::px(100)
+    ) %>%
+    gt::tab_footnote(
+      footnote = gt::md(paste(footnotes, collapse = "; "))
+      )
+
+  table %>%
+    gt::gtsave(filename = paste0("./data/tables/", "table_group_comparison.html"))
 
   return(table)
 
