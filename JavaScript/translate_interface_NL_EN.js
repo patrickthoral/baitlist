@@ -221,7 +221,7 @@ $("td p:contains('Renaal')").html(
 );
 
 $("option:contains('Geen beperkingen (GFR > 30)')").html(
-  "No disabilities (GFR > 30)"
+  "No impairment (GFR > 30)"
 );
 
 $("option:contains('pre-dialyse traject (GFR 15-30)')").html(
@@ -244,22 +244,22 @@ $("td p:contains('Pulmonaal')").html(
 
 
 $("option:contains('Geen beperkingen')").html(
-  "No disabilities"
+  "No impairment"
 );
 
 $("option:contains('Matige beperkingen')").html(
-  "Moderate disabilities"
+  "Moderate impairment"
 );
 
 $("option:contains('Ernstige beperkingen')").html(
-  "Severe disabilities"
+  "Severe impairment"
 );
 
 /*
 Neurological impairment
 
 mRS 0-1
-mRs 2-3
+mRS 2-3
 mRS 4-5
 */
 

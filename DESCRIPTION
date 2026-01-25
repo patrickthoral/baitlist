@@ -1,25 +1,34 @@
 Package: baitlist
 Title: Behavioural Artificial Intelligence Technology for Life Sustaining Therapy (BAITLiST)
-Version: 0.3.0.0000
-Authors@R: 
-    person("Patrick", "Thoral", , "p.thoral@amsterdamumc.nl", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-6140-7195"))
-Description: Model estimation, prediction and evaluation based on discrete choice therapy for the decisision surrounding continuation or withdrawal for life sustaining therapy on the intensive care unit
+Version: 0.4.0.0000
+Authors@R: c(
+    person("Patrick", "Thoral", , "P.J.Thoral@olvg.nl", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-6140-7195")),
+    person("Stella", "Mulia", , "stella@councyl.ai", role = c("aut", "cre")),
+    person("Annebel", "ten Broeke", , "annebel@councyl.ai", role = c("aut", "cre"))
+    )
+Description: 
+    Model estimation, prediction and evaluation based on discrete choice theory for the decisision surrounding continuation or withdrawal for life sustaining therapy on the intensive care unit.
+    Uses the apollo package for modeling and prediction.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     apollo,
     dplyr,
     ggplot2,
     ggsignif,
     gt,
+    katex,
     magrittr,
+    pkgdown,
     readxl,
     rlang,
     stringr,
+    svglite,
     tidyr
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://patrickthoral.github.io/baitlist/

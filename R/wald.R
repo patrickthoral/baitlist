@@ -15,12 +15,18 @@ compare_models <- function() {
 
 
     group1 = groups[[1]]
-    model1 = readRDS(paste0('data/apollo/binary/',
-                            'baitlist_', group1, '_model.rds'))
+    model1 = readRDS(
+      fs::path_package(
+        "extdata", "apollo", "binary", paste0("baitlist_", group1, "_model.rds"),
+        package = "baitlist")
+      )
 
     group2 = groups[[2]]
-    model2 = readRDS(paste0('data/apollo/binary/',
-                            '/baitlist_', group2, '_model.rds'))
+    model2 = readRDS(
+      fs::path_package(
+        "extdata", "apollo", "binary", paste0("baitlist_", group2, "_model.rds"),
+        package = "baitlist")
+      )
 
     coef1 <- model1$estimate
     se1 <- model1$robse
@@ -109,8 +115,11 @@ compare_models <- function() {
     # print(tbl_wald)
 
     # save Wald stats to disk
-    write.csv(tbl_wald, paste0(
-      "./data/wald/", paste(comparisons[[title]], collapse="-"), ".csv"),
+    write.csv(
+      tbl_wald,
+      fs::path_package(
+        "extdata", "wald", paste0(paste(comparisons[[title]], collapse="-"), ".csv"),
+        package = "baitlist"),
       row.names = FALSE
     )
 
@@ -118,4 +127,3 @@ compare_models <- function() {
 
   }
 }
-

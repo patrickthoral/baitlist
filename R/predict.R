@@ -123,6 +123,8 @@ predict <- function(
     group = "aggregate"
 ) {
 
+  library(apollo)
+
   # creates a dummy 'database' for apollo prediction
   database <- dplyr::tibble(
     ID=1,
@@ -147,8 +149,10 @@ predict <- function(
     stop("Invalid model type: '", type, "'")
   }
   model <- readRDS(
-    fs::path_package(paste0("data/apollo/", type, "/baitlist_", group, '_model.rds'),
-    package = "baitlist"))
+    fs::path_package(
+      "extdata", "apollo", type, paste0("baitlist_", group, "_model.rds"),
+      package = "baitlist")
+    )
 
   apollo_beta = model$apollo_beta
   apollo_fixed = model$apollo_fixed

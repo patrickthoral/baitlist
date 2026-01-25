@@ -22,14 +22,15 @@ fit_bait_multinomial <- function(elimination_threshold = 0.20) {
     'fellows'
   )
 
-  for(group in groups) {
+
     # ################################################################# #
     #### LOAD LIBRARY AND DEFINE CORE SETTINGS                       ####
     # ################################################################# #
 
     ### Load Apollo and other libraries
-    # library(apollo)
+    library(apollo)
 
+  for(group in groups) {
     ### Initialise code
     apollo_initialise()
 
@@ -56,7 +57,7 @@ fit_bait_multinomial <- function(elimination_threshold = 0.20) {
       modelName = paste0("baitlist_", group),
       modelDescr = "Multinomial Logit Model for Life Sustaining Therapy",
       indivID = "ID",
-      outputDirectory = paste0("data/apollo/multinomial/")
+      outputDirectory = fs::path_package("extdata/apollo/multinomial/", package = "baitlist")
     )
 
     ### Vector of parameters, including any that are kept fixed in estimation
@@ -233,8 +234,9 @@ fit_bait_multinomial <- function(elimination_threshold = 0.20) {
                                wald = wald_stat,
                                p_value = p_value
     )
-    write.csv(tbl_wald, paste0(
-      apollo_control$outputDirectory, apollo_control$modelName, "_weights_wald.csv"),
+    write.csv(tbl_wald,
+              fs::path_package("extdata/apollo/multinomial/", paste0(apollo_control$modelName, "_weights_wald.csv"),
+                               package = "baitlist"),
       row.names = FALSE
     )
 

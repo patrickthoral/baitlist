@@ -19,7 +19,8 @@ standardized_coefficients <- function() {
   for(group in names(groups)) {
     cat(paste0("Calculating feature importance for: ", groups[group],"\n"))
 
-    model <- readRDS(paste0('data/apollo/binary/baitlist_', group, '_model.rds'))
+    model <- readRDS(fs::path_package("extdata/apollo/binary", paste0("baitlist_", group, "_model.rds"),
+                                      package = "baitlist"))
 
     coefficients <- model$estimate
 
@@ -64,10 +65,12 @@ standardized_coefficients <- function() {
 
 
     # save feature importance to disk
-    write.csv(tbl_coefficients, paste0(
-      "./data/feature_importance/standardized_coefficients/binary/", group, ".csv"),
-      row.names = FALSE
-    )
+    write.csv(tbl_coefficients,
+              fs::path_package(
+                "extdata/feature_importance/standardized_coefficients/binary", paste0(group, ".csv"),
+                package = "baitlist"),
+              row.names = FALSE
+              )
 
     cat("\n\n")
 
@@ -98,7 +101,10 @@ maximum_utility_contribution <- function() {
     cat(paste0("Calculating relative importance using maximum utility contribution for: ",
                groups[group],"\n"))
 
-    model <- readRDS(paste0('data/apollo/binary/baitlist_', group, '_model.rds'))
+    model <- readRDS(fs::path_package(
+      "extdata/apollo/binary", paste0("baitlist_", group, "_model.rds"),
+      package = "baitlist")
+      )
 
     coefficients <- model$estimate
 
@@ -145,9 +151,11 @@ maximum_utility_contribution <- function() {
     print(tbl_coefficients)
 
     # save feature importance to disk
-    write.csv(tbl_coefficients, paste0(
-      "./data/feature_importance/maximum_utility_contribution/binary/", group, ".csv"),
-      row.names = FALSE
+    write.csv(tbl_coefficients,
+              fs::path_package(
+                "extdata/feature_importance/maximum_utility_contribution/binary/", paste0(group, ".csv"),
+                package = "baitlist"),
+              row.names = FALSE
     )
 
     cat("\n\n")

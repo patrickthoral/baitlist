@@ -9,7 +9,11 @@
 #' @examples
 #' create_criteria_table()
 create_criteria_table <- function() {
-  model_criteria <- readxl::read_excel('./data/model_criteria.xlsx')
+  model_criteria <- readxl::read_excel(
+    fs::path_package(
+      "extdata", "model_criteria.xlsx",
+      package = "baitlist")
+  )
 
   criteria_table <- model_criteria %>%
     tidyr::pivot_wider(
@@ -27,8 +31,11 @@ create_criteria_table <- function() {
 
 
   # save table to disk
-  write.csv(criteria_table, paste0(
-    "data/tables/", "table_criteria.csv"),
+  write.csv(
+    criteria_table,
+    fs::path_package(
+      "extdata", "tables", "table_criteria.csv",
+      package = "baitlist"),
     row.names = FALSE
   )
   return(criteria_table)
@@ -61,18 +68,24 @@ create_model_weights_tables <- function() {
 
   for(group in names(groups)) {
 
-    model <- readRDS(paste0(
-      "data/apollo/binary/",
-      "baitlist_", group, "_model.rds"))
+    model <- readRDS(
+      fs::path_package(
+        "extdata", "apollo", "binary", paste0("baitlist_", group, "_model.rds"),
+        package = "baitlist")
+    )
 
-    wald <- read.csv(paste0(
-      "./data/apollo/binary/",
-      "baitlist_", group, "_weights_wald.csv")
+    wald <- read.csv(
+      fs::path_package(
+        "extdata", "apollo", "binary", paste0("baitlist_", group, "_weights_wald.csv"),
+        package = "baitlist")
     )
 
     # add human readable names to data set
-    criteria <- readxl::read_excel(paste0(
-      './data/', 'model_criteria.xlsx')
+    criteria <- readxl::read_excel(
+      fs::path_package(
+        "extdata", "model_criteria.xlsx",
+        package = "baitlist"
+      )
     ) %>%
       dplyr::select(ID_Alternative, Name) %>%
       dplyr::distinct() %>%
@@ -213,7 +226,10 @@ create_model_weights_tables <- function() {
       gt::fmt_markdown()
 
       table %>%
-        gt::gtsave(filename = paste0("./data/tables/", "model_weights_", group, ".html"))
+        gt::gtsave(filename = fs::path_package(
+          "extdata", "tables", paste0("model_weights_", group, ".html"),
+          package = "baitlist")
+        )
 
   }
 
@@ -257,8 +273,10 @@ create_group_comparison_table <- function() {
     group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
     group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
 
-    wald <- read.csv(paste0(
-      "./data/wald/", paste(groups, collapse="-"), ".csv")
+    wald <- read.csv(
+      fs::path_package(
+        "extdata", "wald", paste0(paste(groups, collapse="-"), ".csv"),
+        package = "baitlist")
     )
 
     # determine variable name (e.g. strip "b_" from name)
@@ -267,8 +285,10 @@ create_group_comparison_table <- function() {
       dplyr::mutate_at("variable", as.character)
 
     # add human readable names to data set
-    criteria <- readxl::read_excel(paste0(
-      './data/', 'model_criteria.xlsx')
+    criteria <- readxl::read_excel(
+      fs::path_package(
+        "extdata", "model_criteria.xlsx",
+        package = "baitlist")
     ) %>%
       dplyr::select(ID_Alternative, Name) %>%
       dplyr::distinct() %>%
@@ -455,8 +475,10 @@ create_group_comparison_table <- function() {
       )
 
   table %>%
-    gt::gtsave(filename = paste0("./data/tables/", "table_group_comparison.html"))
+    gt::gtsave(filename = fs::path_package(
+      "extdata", "tables", "table_group_comparison.html",
+      package = "baitlist")
+    )
 
   return(table)
-
 }

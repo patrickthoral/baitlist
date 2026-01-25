@@ -1,5 +1,9 @@
 select_groups <- function(group = "aggregate") {
-  database <- readxl::read_excel('./data/responses.xlsx')
+  database <- readxl::read_excel(
+    fs::path_package(
+      "extdata", "responses.xlsx",
+      package = "baitlist")
+    )
 
   if(group == 'aumc') {
     database <- database %>%

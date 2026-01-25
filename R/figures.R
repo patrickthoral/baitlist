@@ -28,14 +28,18 @@ plot_relative_importance <- function() {
   )
 
 
-  group <- 'aggregate'
-  muc <- read.csv(paste0(
-    './data/feature_importance/maximum_utility_contribution/binary/', group, '.csv')
+  group <- "aggregate"
+  muc <- read.csv(
+    fs::path_package(
+      "extdata/feature_importance/maximum_utility_contribution/binary", paste0(group, ".csv"),
+      package = "baitlist")
   )
 
   # add human readable names to data set
-  criteria <- readxl::read_excel(paste0(
-    './data/', 'model_criteria.xlsx')
+  criteria <- readxl::read_excel(
+    fs::path_package(
+      "extdata", "model_criteria.xlsx",
+      package = "baitlist")
     ) %>%
     dplyr::select(ID_Alternative, Name) %>%
     dplyr::distinct() %>%
@@ -98,7 +102,9 @@ plot_relative_importance <- function() {
 
   for(file_type in file_types) {
     ggplot2::ggsave(
-      paste0("./data/figures/factor_importance_", group, ".", file_type),
+      fs::path_package(
+        "extdata", "figures", paste0("factor_importance_", group, ".", file_type),
+        package = "baitlist"),
       plot = plt,
       width = 9,
       height = 7,
@@ -168,21 +174,27 @@ plot_group_comparison <- function() {
     group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
     group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
 
-    wald <- read.csv(paste0(
-      "./data/wald/", paste(groups, collapse="-"), ".csv")
+    wald <- read.csv(
+      fs::path_package(
+        "extdata", "wald", paste0(paste(groups, collapse="-"), ".csv"),
+        package = "baitlist")
     )
 
     feature_importance_measure <- "standardized_coefficients"
     fi_col <- 'std_coef'
 
-    fi1 <- read.csv(paste0(
-      "./data/feature_importance/", feature_importance_measure, "/binary/", group1, ".csv")
+    fi1 <- read.csv(
+      fs::path_package(
+        "extdata", "feature_importance", feature_importance_measure, "binary", paste0(group1, ".csv"),
+        package = "baitlist")
     ) %>%
       dplyr::select(variable, all_of(!!fi_col)) %>%
       dplyr::rename(!!paste0(fi_col, "_", group1) := fi_col)
 
-    fi2 <- read.csv(paste0(
-      "./data/feature_importance/", feature_importance_measure, "/binary/", group2, ".csv")
+    fi2 <- read.csv(
+      fs::path_package(
+        "extdata", "feature_importance", feature_importance_measure, "binary", paste0(group2, ".csv"),
+        package = "baitlist")
     ) %>%
       dplyr::select(variable, all_of(!!fi_col)) %>%
       dplyr::rename(!!paste0(fi_col, "_", group2) := fi_col)
@@ -212,8 +224,10 @@ plot_group_comparison <- function() {
         )
 
     # add human readable names to data set
-    criteria <- readxl::read_excel(paste0(
-      './data/', 'model_criteria.xlsx')
+    criteria <- readxl::read_excel(
+      fs::path_package(
+        "extdata", "model_criteria.xlsx",
+        package = "baitlist")
     ) %>%
       dplyr::select(ID_Alternative, Name) %>%
       dplyr::distinct() %>%
@@ -369,7 +383,9 @@ plot_group_comparison <- function() {
 
     for(file_type in file_types) {
       ggplot2::ggsave(
-        paste0("./data/figures/group_comparison_", paste(groups, collapse="_"), ".", file_type),
+        fs::path_package(
+          "extdata", "figures", paste0("group_comparison_", paste(groups, collapse="_"), ".", file_type),
+          package = "baitlist"),
         plot = plt,
         width = 9,
         height = 5,
@@ -382,5 +398,3 @@ plot_group_comparison <- function() {
   return(plt)
 
 }
-
-
