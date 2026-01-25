@@ -62,20 +62,34 @@ fit_bait_multinomial <- function(elimination_threshold = 0.20) {
     ### Vector of parameters, including any that are kept fixed in estimation
     apollo_beta <- c(
       asc_continue = 0,
-      asc_withdraw = 0,
+      b_expected_los_continue = 0,
+      b_clinical_situation_continue = 0,
+      b_age_continue = 0,
+      b_frailty_continue = 0,
+      b_life_expectancy_continue = 0,
+      b_suffering_continue = 0,
+      b_disability_cardiovascular_continue = 0,
+      b_disability_pulmonary_continue = 0,
+      b_disability_renal_continue = 0,
+      b_disability_neurological_continue = 0,
+      b_disability_gastrointestinal_continue = 0,
+      b_family_values_continue = 0,
+
       asc_timelimited = 0,
-      b_expected_los = 0,
-      b_clinical_situation = 0,
-      b_age = 0,
-      b_frailty = 0,
-      b_life_expectancy = 0,
-      b_suffering = 0,
-      b_disability_cardiovascular = 0,
-      b_disability_pulmonary = 0,
-      b_disability_renal = 0,
-      b_disability_neurological = 0,
-      b_disability_gastrointestinal = 0,
-      b_family_values = 0
+      b_expected_los_timelimited = 0,
+      b_clinical_situation_timelimited = 0,
+      b_age_timelimited = 0,
+      b_frailty_timelimited = 0,
+      b_life_expectancy_timelimited = 0,
+      b_suffering_timelimited = 0,
+      b_disability_cardiovascular_timelimited = 0,
+      b_disability_pulmonary_timelimited = 0,
+      b_disability_renal_timelimited = 0,
+      b_disability_neurological_timelimited = 0,
+      b_disability_gastrointestinal_timelimited = 0,
+      b_family_values_timelimited = 0,
+
+      asc_withdraw = 0
     )
 
     # Vector with names (in quotes) of parameters to be kept fixed at their starting value
@@ -110,40 +124,40 @@ fit_bait_multinomial <- function(elimination_threshold = 0.20) {
       ### List of utilities: these must use the same names as in mnl_settings, order is irrelevant
       V = list()
       V[["continue"]] = asc_continue +
-        b_expected_los * expected_los +
-        b_clinical_situation * clinical_situation +
-        b_age * age +
-        b_frailty * frailty +
-        b_life_expectancy * life_expectancy +
-        b_suffering * suffering +
-        b_disability_cardiovascular * disability_cardiovascular +
-        b_disability_pulmonary * disability_pulmonary +
-        b_disability_renal * disability_renal +
-        b_disability_neurological * disability_neurological +
-        b_disability_gastrointestinal * disability_gastrointestinal +
-        b_family_values * family_values
+        b_expected_los_continue * expected_los +
+        b_clinical_situation_continue * clinical_situation +
+        b_age_continue * age +
+        b_frailty_continue * frailty +
+        b_life_expectancy_continue * life_expectancy +
+        b_suffering_continue * suffering +
+        b_disability_cardiovascular_continue * disability_cardiovascular +
+        b_disability_pulmonary_continue * disability_pulmonary +
+        b_disability_renal_continue * disability_renal +
+        b_disability_neurological_continue * disability_neurological +
+        b_disability_gastrointestinal_continue * disability_gastrointestinal +
+        b_family_values_continue * family_values
 
       V[["timelimited"]] = asc_timelimited +
-        b_expected_los * expected_los +
-        b_clinical_situation * clinical_situation +
-        b_age * age +
-        b_frailty * frailty +
-        b_life_expectancy * life_expectancy +
-        b_suffering * suffering +
-        b_disability_cardiovascular * disability_cardiovascular +
-        b_disability_pulmonary * disability_pulmonary +
-        b_disability_renal * disability_renal +
-        b_disability_neurological * disability_neurological +
-        b_disability_gastrointestinal * disability_gastrointestinal +
-        b_family_values * family_values
+        b_expected_los_timelimited * expected_los +
+        b_clinical_situation_timelimited * clinical_situation +
+        b_age_timelimited * age +
+        b_frailty_timelimited * frailty +
+        b_life_expectancy_timelimited * life_expectancy +
+        b_suffering_timelimited * suffering +
+        b_disability_cardiovascular_timelimited * disability_cardiovascular +
+        b_disability_pulmonary_timelimited * disability_pulmonary +
+        b_disability_renal_timelimited * disability_renal +
+        b_disability_neurological_timelimited * disability_neurological +
+        b_disability_gastrointestinal_timelimited * disability_gastrointestinal +
+        b_family_values_timelimited * family_values
 
       V[["withdraw"]] = asc_withdraw
 
 
       ### Define settings for MNL model component
       mnl_settings = list(
-        alternatives  = c(withdraw=3, continue=2, timelimited=1),
-        avail         = 1, # alternative always available
+        alternatives  = c(timelimited=1, continue=2, withdraw=3),
+        avail         = list('timelimited'=1, 'continue'=1, 'withdraw'=1),
         choiceVar     = CHOICE_MULTINOMIAL,
         utilities     = V
       )
