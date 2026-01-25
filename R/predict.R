@@ -1,41 +1,111 @@
 #' Predict choice based on patient characteristics and family values
 #'
-#' Used the `apollo` package to predict the choice based on the fitted models
+#' Use the `apollo` package to predict the choice based on the fitted models
 #' @param expected_los
-#' Expected length of stay
+#' Expected additional ICU length of stay.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | A couple of weeks |
+#' | 1 | A couple of months |
 #' @param clinical_situation
-#' Clinical Situation
+#' Clinical Situation.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | Deterioration |
+#' | 1 | No improvement |
 #' @param age
-#' Age
+#' Age.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | 40 years |
+#' | 1 | 55 years |
+#' | 2 | 70 years |
+#' | 3 | 85 years |
 #' @param frailty
-#' Frailty
+#' Frailty at hospital admission.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | Clinical Frailty Score: 1-2 |
+#' | 1 | Clinical Frailty Score: 3-4 |
+#' | 2 | Clinical Frailty Score: 5-6 |
 #' @param life_expectancy
-#' Life Expectancy
+#' Life expectancy (pre-admission).
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | 6 - 12 months |
+#' | 1 | 1 - 5 years |
+#' | 1 | > 5 years |
 #' @param suffering
-#' Suffering
+#' Burden of Suffering.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | Limited |
+#' | 1 | Severe |
 #' @param disability_cardiovascular
-#' Expected cardiovascular disability after discharge
+#' Expected cardiovascular impairment after discharge.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | NYHA I |
+#' | 1 | NYHA II |
+#' | 2 | NYHA III |
+#' | 3 | NYHA IV |
 #' @param disability_pulmonary
-#' Expected pulmonary disability after discharge
+#' Expected pulmonary impairment after discharge.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | No impairment |
+#' | 1 | Moderate impairment |
+#' | 2 | Severe impairment |
 #' @param disability_renal
-#' Expected renal disability after discharge
+#' Expected renal impairment after discharge.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | No impairment (GFR > 30) |
+#' | 1 | Pre-dialysis (GFR 15-30) |
+#' | 2 | Dialysis dependent (GFR < 15) |
 #' @param disability_neurological
-#' Expected neurological disability after discharge
+#' Expected neurological impairment after discharge.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | mRS 0-1 |
+#' | 1 | mRS 2-3 |
+#' | 2 | mRS 4-5 |
 #' @param disability_gastrointestinal
-#' Expected gastrointestinal disability after discharge
+#' Expected gastrointestinal impairment after discharge.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | Without tube-feeding |
+#' | 1 | Tube-feeding dependent |
 #' @param family_values
-#' Family values
+#' Patient or Family Values.
+#' Use one of the following (Default = 0):
+#' | Value | Description |
+#' | --- | --- |
+#' | 0 | Expected future physical disabilities are possibly acceptable |
+#' | 1 | Expected future physical disabilities are most likely unacceptable |
 #' @param type
-#' Either 'binary' or 'multinomial'. Default: 'binary'.
+#' Either "binary" or "multinomial". Default: "binary".
 #' @param group
-#' Either 'aggregate', 'aumc', 'olvg', 'intensivists' or 'fellows'. Default: 'aggregate'
+#' Either "aggregate", "aumc", "olvg", "intensivists" or "fellows". Default: "aggregate"
 #'
 #' @return
-#' Returns tibble containing prediction
+#' Returns tibble containing the prediction.
 #' @export
 #'
 #' @examples
 #' predict(family_values = 1)
+#' predict(type = "multinomial", expected_los = 1, clinical_situation = 1, age = 1, frailty = 1, life_expectancy = 1, suffering = 1, disability_cardiovascular = 1, disability_pulmonary = 1, disability_renal = 1, disability_neurological = 1, disability_gastrointestinal = 1, family_values = 1)
 predict <- function(
     expected_los = 0,
     clinical_situation = 0,
@@ -76,7 +146,9 @@ predict <- function(
   if(!(type == 'binary' | type == 'multinomial')) {
     stop("Invalid model type: '", type, "'")
   }
-  model <- readRDS(paste0("data/apollo/", type, "/baitlist_", group, '_model.rds'))
+  model <- readRDS(
+    fs::path_package(paste0("data/apollo/", type, "/baitlist_", group, '_model.rds'),
+    package = "baitlist"))
 
   apollo_beta = model$apollo_beta
   apollo_fixed = model$apollo_fixed
@@ -109,7 +181,5 @@ predict <- function(
     return(predictions[c('withdraw','timelimited', 'continue')])
   }
 }
-
-
 
 

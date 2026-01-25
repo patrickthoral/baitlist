@@ -22,40 +22,110 @@ predict(
 )
 }
 \arguments{
-\item{expected_los}{Expected length of stay}
+\item{expected_los}{Expected additional ICU length of stay.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab A couple of weeks \cr
+   1 \tab A couple of months \cr
+}}
 
-\item{clinical_situation}{Clinical Situation}
+\item{clinical_situation}{Clinical Situation.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab Deterioration \cr
+   1 \tab No improvement \cr
+}}
 
-\item{age}{Age}
+\item{age}{Age.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab 40 years \cr
+   1 \tab 55 years \cr
+   2 \tab 70 years \cr
+   3 \tab 85 years \cr
+}}
 
-\item{frailty}{Frailty}
+\item{frailty}{Frailty at hospital admission.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab Clinical Frailty Score: 1-2 \cr
+   1 \tab Clinical Frailty Score: 3-4 \cr
+   2 \tab Clinical Frailty Score: 5-6 \cr
+}}
 
-\item{life_expectancy}{Life Expectancy}
+\item{life_expectancy}{Life expectancy (pre-admission).
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab 6 - 12 months \cr
+   1 \tab 1 - 5 years \cr
+   1 \tab > 5 years \cr
+}}
 
-\item{suffering}{Suffering}
+\item{suffering}{Burden of Suffering.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab Limited \cr
+   1 \tab Severe \cr
+}}
 
-\item{disability_cardiovascular}{Expected cardiovascular disability after discharge}
+\item{disability_cardiovascular}{Expected cardiovascular impairment after discharge.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab NYHA I \cr
+   1 \tab NYHA II \cr
+   2 \tab NYHA III \cr
+   3 \tab NYHA IV \cr
+}}
 
-\item{disability_pulmonary}{Expected pulmonary disability after discharge}
+\item{disability_pulmonary}{Expected pulmonary impairment after discharge.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab No impairment \cr
+   1 \tab Moderate impairment \cr
+   2 \tab Severe impairment \cr
+}}
 
-\item{disability_renal}{Expected renal disability after discharge}
+\item{disability_renal}{Expected renal impairment after discharge.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab No impairment (GFR > 30) \cr
+   1 \tab Pre-dialysis (GFR 15-30) \cr
+   2 \tab Dialysis dependent (GFR < 15) \cr
+}}
 
-\item{disability_neurological}{Expected neurological disability after discharge}
+\item{disability_neurological}{Expected neurological impairment after discharge.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab mRS 0-1 \cr
+   1 \tab mRS 2-3 \cr
+   2 \tab mRS 4-5 \cr
+}}
 
-\item{disability_gastrointestinal}{Expected gastrointestinal disability after discharge}
+\item{disability_gastrointestinal}{Expected gastrointestinal impairment after discharge.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab Without tube-feeding \cr
+   1 \tab Tube-feeding dependent \cr
+}}
 
-\item{family_values}{Family values}
+\item{family_values}{Patient or Family Values.
+Use one of the following (Default = 0):\tabular{ll}{
+   Value \tab Description \cr
+   0 \tab Expected future physical disabilities are possibly acceptable \cr
+   1 \tab Expected future physical disabilities are most likely unacceptable \cr
+}}
 
-\item{type}{Either 'binary' or 'multinomial'. Default: 'binary'.}
+\item{type}{Either "binary" or "multinomial". Default: "binary".}
 
-\item{group}{Either 'aggregate', 'aumc', 'olvg', 'intensivists' or 'fellows'. Default: 'aggregate'}
+\item{group}{Either "aggregate", "aumc", "olvg", "intensivists" or "fellows". Default: "aggregate"}
 }
 \value{
-Returns tibble containing prediction
+Returns tibble containing the prediction.
 }
 \description{
-Used the \code{apollo} package to predict the choice based on the fitted models
+Use the \code{apollo} package to predict the choice based on the fitted models
 }
 \examples{
 predict(family_values = 1)
+predict(type = "multinomial", expected_los = 1, clinical_situation = 1, age = 1, frailty = 1, life_expectancy = 1, suffering = 1, disability_cardiovascular = 1, disability_pulmonary = 1, disability_renal = 1, disability_neurological = 1, disability_gastrointestinal = 1, family_values = 1)
 }
