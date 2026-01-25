@@ -1,11 +1,11 @@
 Package: baitlist
 Title: Behavioural Artificial Intelligence Technology for Life Sustaining Therapy (BAITLiST)
-Version: 0.4.0.0000
+Version: 0.4.1.0000
 Authors@R: c(
     person("Patrick", "Thoral", , "P.J.Thoral@olvg.nl", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6140-7195")),
-    person("Stella", "Mulia", , "stella@councyl.ai", role = c("aut", "cre")),
-    person("Annebel", "ten Broeke", , "annebel@councyl.ai", role = c("aut", "cre"))
+    person("Stella", "Mulia", , "stella@councyl.ai", role = "aut"),
+    person("Annebel", "ten Broeke", , "annebel@councyl.ai", role = "aut")
     )
 Description: 
     Model estimation, prediction and evaluation based on discrete choice theory for the decisision surrounding continuation or withdrawal for life sustaining therapy on the intensive care unit.
