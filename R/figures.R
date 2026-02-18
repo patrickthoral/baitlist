@@ -935,7 +935,7 @@ plot_pooled_group_comparison <- function() {
 
       for(file_type in file_types) {
         ggplot2::ggsave(
-          fs::path(datadir, "figures", modeltype, paste0("group_comparison_", paste(groups, collapse="_"), ".", file_type)),
+          fs::path(datadir, "figures", modeltype, paste0("pooled_group_comparison_", paste(groups, collapse="_"), ".", file_type)),
           plot = plt,
           width = 9,
           height = 9,
