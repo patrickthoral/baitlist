@@ -1,3 +1,3 @@
 test_that("variable converting", {
-  expect_equal(coefficient_to_variable("b_age"), "age")
+  expect_equal(length(plot_group_comparison()), 2) # two figures should be returned
 })
