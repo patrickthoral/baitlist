@@ -620,5 +620,330 @@ plot_group_comparison <- function() {
   return(plots)
 }
 
+#' Plots group comparison of coefficient weights
+#'
+#' Creates plots with coefficients weights and significance levels comparing both groups using the Wald test.
+#' Saves the plots as png and svg in the `data\figures` folder.
+#' @return
+#' list of ggplots
+#' @export
+#'
+#' @examples
+#' plot_pooled_group_comparison()
+plot_pooled_group_comparison <- function() {
+  comparisons <- list(
+    'Amsterdam UMC vs. OLVG'=list(
+      groups = c('aumc','olvg'),
+      colors = c('#F07814', '#17428C')
+    ),
+    'Intensivists vs. Fellows'=list(
+      groups = c('intensivists','fellows'),
+      colors = c('#006BA4', '#A2C8EC') # From Tableau Colorblind
+    )
+  )
 
+  modeltypes <- c('binary', 'multinomial')
+
+  plots <- list()
+
+  datadir <- fs::path_package(
+    "extdata", package = "baitlist")
+
+  for(modeltype in modeltypes) {
+
+    plots[[modeltype]] <- list()
+
+    for(title in names(comparisons)) {
+      cat(paste0("Comparing: ", title, " (", modeltype, ")\n" ))
+      comparison <- comparisons[[title]]
+      groups <- comparison[['groups']]
+      group1 <- groups[[1]]
+      group2 <- groups[[2]]
+
+      colors <- comparison[['colors']]
+
+      group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
+      group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
+
+      wald_wide <- wald_interaction(group1, group2, modeltype)
+
+      #pivot longer
+      wald <- wald_wide %>%
+        tidyr::pivot_longer(
+          cols = c(coef_group1, coef_group2, se_group1, se_group2),
+          names_to = c(".value", "group"),
+          names_pattern = "(coef|se)_group(1|2)"
+        ) %>%
+        dplyr::mutate(
+          group = dplyr::recode(group,
+                                "1" = group1_name,
+                                "2" = group2_name)
+        )
+
+      # remove joint test
+      wald <- wald %>%
+        dplyr::filter((type == "Criteria"))
+
+      # use the coef column  to plot main data "factor importance"
+      fi_col <- 'coef'
+
+      dodge <- ggplot2::position_dodge(width = 0.9)
+
+      if(modeltype == 'binary') {
+        # plot group1 vs group2
+        plt <- ggplot2::ggplot(
+          data = wald,
+          mapping = ggplot2::aes(
+            x = factor(name, levels = rev(unique(name))),
+            y = .data[[fi_col]],
+            fill = factor(group, levels = rev(unique(group)))
+          )
+        ) +
+          # stat = "identity" prevents sorting the variable names
+          ggplot2::geom_bar(
+            position = dodge,
+            stat = "identity"
+          ) +
+          ggplot2::geom_errorbar(
+            ggplot2::aes(
+              ymin = .data[[fi_col]] - 1.96 * se,
+              ymax = .data[[fi_col]] + 1.96 * se ),
+            width = 0.5,
+            position = dodge
+            ) +
+          ggplot2::scale_fill_manual(values = rev(colors)) +
+          ggplot2::labs(
+            title = paste0("Factor Importance: ", title),
+            x = NULL,
+            y = "Coefficient Weight",
+            fill = "Group"
+          ) +
+          ggplot2::guides(
+            fill = ggplot2::guide_legend(reverse = TRUE)) +
+          ggplot2::theme_bw() +
+          ggplot2::theme(
+            axis.text = ggplot2::element_text(size = 10),
+            panel.grid.major.x = ggplot2::element_line(
+              color = 'lightgrey',
+              linewidth = 0.25,
+              linetype = 2
+            ),
+            panel.grid.minor.x = ggplot2::element_blank(), # hide vertical minor grid lines
+            panel.grid.major.y = ggplot2::element_blank(), # hide horizontal grid lines
+            plot.title = ggplot2::element_text(hjust = 0.5) # centered horizontally
+          ) +
+          ggplot2::coord_flip() # flip x and y to allow for horizontal bar chart"
+      }
+      else if (modeltype == 'multinomial') {
+
+        # change the labels
+        wald$alternative <- dplyr::recode(
+          wald$alternative,
+          "continue" = "Continue vs. Withdraw",
+          "timelimited" = "Time-Limited Trial vs. Withdraw"
+        )
+
+        plt <- ggplot2::ggplot(
+          data = wald,
+          mapping = ggplot2::aes(
+            x = factor(name, levels = rev(unique(name))),
+            y = .data[[fi_col]],
+            fill = factor(group, levels = rev(unique(group)))
+          )
+        ) +
+          ggplot2::geom_bar(
+            position = dodge,
+            stat = "identity"
+          ) +
+          ggplot2::geom_errorbar(
+            ggplot2::aes(
+              ymin = .data[[fi_col]] - 1.96 * se,
+              ymax = .data[[fi_col]] + 1.96 * se ),
+            width = 0.5,
+            position = dodge
+          ) +
+          ggplot2::scale_fill_manual(values = rev(colors)) +
+          ggplot2::labs(
+            title = paste0("Factor Importance: ", title),
+            x = NULL,
+            y = "Coefficient Weight",
+            fill = "Group"
+          ) +
+          ggplot2::guides(
+            fill = ggplot2::guide_legend(reverse = TRUE)
+          ) +
+          ggplot2::theme_bw() +
+          ggplot2::theme(
+            axis.text = ggplot2::element_text(size = 10),
+            panel.grid.major.x = ggplot2::element_line(
+              color = 'lightgrey',
+              linewidth = 0.25,
+              linetype = 2
+            ),
+            panel.grid.minor.x = ggplot2::element_blank(),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.title = ggplot2::element_text(hjust = 0.5)
+          ) +
+          ggplot2::facet_wrap(~ alternative, ncol = 1) +
+          ggplot2::coord_flip()
+      }
+
+      # create data frame containing significant differences based on Wald
+      half_width <- 0.5/2
+      y_offset <- 0.10
+
+
+      if (modeltype == "binary") {
+
+        df_signif <- wald %>%
+          dplyr::select(
+            coefficient_name,
+            name,
+            group,
+            all_of(!!fi_col),
+            se,
+            wald,
+            p_value) %>%
+          tidyr::pivot_wider(
+            names_from = group,
+            values_from = c(!!fi_col, se)
+          ) %>%
+          dplyr::mutate(
+            xmid = dplyr::n() + 1 - dplyr::row_number(),
+            xmin = xmid - half_width,
+            xmax = xmid + half_width,
+            y_position = max(
+              .data[[paste0(fi_col, "_", group1_name)]] + 1.96 * .data[[paste0("se_", group1_name)]],
+              .data[[paste0(fi_col, "_", group2_name)]] + 1.96 * .data[[paste0("se_", group2_name)]]
+              ) * (1 + y_offset),
+            annotation = dplyr::case_when(
+              p_value < 0.001 ~ '***',
+              p_value < 0.01 ~ '**',
+              p_value < 0.05 ~ '*',
+              .default = "NS"
+            )
+          ) %>%
+          dplyr::mutate(
+            tip_length_1 = 0,
+            tip_length_2 = 0
+          ) %>%
+          dplyr::filter(!is.na(annotation))
+
+      } else if (modeltype == "multinomial") {
+
+        df_signif <- wald %>%
+          dplyr::select(
+            coefficient_name,
+            name,
+            group,
+            alternative,
+            all_of(!!fi_col),
+            se,
+            wald,
+            p_value
+          ) %>%
+          tidyr::pivot_wider(
+            names_from = group,
+            values_from = c(!!fi_col, se)
+          ) %>%
+          # xmid logic identical to binary, but done per facet
+          dplyr::group_by(alternative) %>%
+          dplyr::mutate(
+            xmid = dplyr::n() + 1 - dplyr::row_number()
+          ) %>%
+          dplyr::ungroup() %>%
+          dplyr::mutate(
+            xmin = xmid - half_width,
+            xmax = xmid + half_width,
+            y_position = max(
+              .data[[paste0(fi_col, "_", group1_name)]] + 1.96 * .data[[paste0("se_", group1_name)]],
+              .data[[paste0(fi_col, "_", group2_name)]] + 1.96 * .data[[paste0("se_", group2_name)]]
+            ) * (1 + y_offset),
+            annotation = dplyr::case_when(
+              p_value < 0.001 ~ '***',
+              p_value < 0.01 ~ '**',
+              p_value < 0.05 ~ '*',
+              .default = "NS"
+            )
+          ) %>%
+          dplyr::mutate(
+            tip_length_1 = 0,
+            tip_length_2 = 0
+          ) %>%
+          dplyr::filter(!base::is.na(annotation))
+
+      }
+
+      for (i in seq_len(nrow(df_signif))) {
+
+        row <- df_signif[i, ]
+
+        if (row$annotation == "NS") {
+          textsize <- 3
+          vjust <- 0.5
+          color <- "grey"
+        } else {
+          textsize <- 5
+          vjust <- 0.75
+          color <- "black"
+        }
+
+        suppressWarnings({
+          plt <- plt +
+            ggsignif::geom_signif(
+              data = row,
+              mapping = ggplot2::aes(
+                xmin        = xmin,
+                xmax        = xmax,
+                y_position  = y_position,
+                annotations = annotation
+              ),
+              manual = TRUE,
+              inherit.aes = FALSE,
+              tip_length = c(row$tip_length_2, row$tip_length_1),
+              textsize   = textsize,
+              vjust      = vjust,
+              color      = color,
+              angle      = 360,
+              hjust      = 0
+            )
+        })
+      }
+
+
+      # increase y_margin for horizontally printed annotations of significance brackets and
+      # remove last grid line to prevent interfering with the significance brackets
+      y_limits <- ggplot2::layer_scales(plt)$y$get_limits()
+      y_breaks <- ggplot2::layer_scales(plt)$y$get_breaks()
+
+      # change major grid lines depending on number of grid lines currently > 0
+      if(y_breaks[length(y_breaks)] <= 1) {
+        by <- 0.5
+      }
+      else
+        by <- 1
+
+      plt <- plt + ggplot2::scale_y_continuous(
+        limits = c(y_limits[1], y_limits[2]*1.05),
+        breaks = seq(from = y_breaks[1], to = y_breaks[length(y_breaks)] - by, by = by),
+        minor_breaks = NULL
+      )
+
+      plots[[modeltype]][[paste(groups, collapse="_")]] <- plt
+
+      file_types <- c('png', 'svg')
+
+      for(file_type in file_types) {
+        ggplot2::ggsave(
+          fs::path(datadir, "figures", modeltype, paste0("group_comparison_", paste(groups, collapse="_"), ".", file_type)),
+          plot = plt,
+          width = 9,
+          height = 9,
+          dpi = 300,
+          create.dir = TRUE)
+      }
+    }
+
+  }
+  return(plots)
 }
