@@ -615,6 +615,7 @@ plot_group_comparison <- function() {
           create.dir = TRUE)
       }
 
+    }
   }
   return(plots)
 }
