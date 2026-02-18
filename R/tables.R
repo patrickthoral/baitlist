@@ -1,18 +1,21 @@
 #' Create Criteria table
 #'
 #' Displays the criteria and associated levels used in the discrete choice experiment. Saves
-#' the pivot table as `data/tables/table_criteria.csv`.
+#' the pivot table as `extdata/tables/table_criteria.html`.
 #' @return
-#' Tibble containing criteria
+#' gt table of the criteria (Table 1)
 #' @export
 #'
 #' @examples
 #' create_criteria_table()
 create_criteria_table <- function() {
+
+  # data directory
+  datadir <- fs::path_package(
+    "extdata", package = "baitlist")
+
   model_criteria <- readxl::read_excel(
-    fs::path_package(
-      "extdata", "model_criteria.xlsx",
-      package = "baitlist")
+    fs::path(datadir, "model_criteria.xlsx")
   )
 
   criteria_table <- model_criteria %>%
@@ -22,23 +25,81 @@ create_criteria_table <- function() {
       ) %>%
     dplyr::rename(
       "Criterion" = "Name",
-      "Level 1" = "0",
-      "Level 2" = "1",
-      "Level 3" = "2",
-      "Level 4" = "3"
+      "Level 0" = "0",
+      "Level 1" = "1",
+      "Level 2" = "2",
+      "Level 3" = "3"
     ) %>%
     dplyr::select(!(c(ID, ID_Alternative)))
 
+  # Build Table 1
+  table <- criteria_table %>%
+    # Identify impairment rows
+    dplyr::mutate(
+      is_impairment = grepl("impairment", Criterion, ignore.case = TRUE)
+    ) %>%
 
-  # save table to disk
-  write.csv(
-    criteria_table,
-    fs::path_package(
-      "extdata", "tables", "table_criteria.csv",
-      package = "baitlist"),
-    row.names = FALSE
-  )
-  return(criteria_table)
+    # Build gt table
+    gt::gt(rowname_col = "Criterion") %>%
+
+    # Group ONLY impairment rows, preserving original order
+    gt::tab_row_group(
+      label = "Baseline Clinical and Prognostic Factors",
+      rows = c("Expected additional ICU length of stay",
+               "Clinical situation",
+               "Age (years)",
+               "Frailty at hospital admission",
+               "Life expectancy (pre-admission)",
+               "Burden of Suffering"
+      ),
+      id = "general"
+    ) %>%
+    gt::tab_row_group(
+      label = "Expected Post-ICU Impairment",
+      rows = is_impairment,
+      id   = "expected_impairment"
+    ) %>%
+    gt::tab_row_group(
+      label = "Patient or Family Values",
+      rows = "Patient or Family Values",
+      id   = "values"
+    ) %>%
+
+    # Force ungrouped rows to appear first (preserve original order)
+    gt::row_group_order(
+      groups = c(
+      "general",
+      "expected_impairment",
+      "values")
+      ) %>%
+    # Bold headers + bold group label
+    gt::tab_style(
+      style = cell_text(weight = "bold"),
+      locations = cells_column_labels(everything())
+    ) %>%
+    gt::tab_style(
+      style = cell_text(weight = "bold"),
+      locations = cells_row_groups()
+    ) %>%
+
+    # Optional: cleaner spacing
+    gt::tab_options(
+      table.font.size = px(14),
+      data_row.padding = px(6),
+      row_group.as_column = FALSE
+    ) %>%
+
+    # Hide helper column
+    gt::cols_hide("is_impairment") %>%
+    gt::sub_missing(
+      columns = everything(),
+      missing_text = ""
+      )
+
+  table %>%
+    gt::gtsave(filename = fs::path(datadir, "tables", "table_criteria.html")
+    )
+  return(table)
 
 }
 
