@@ -106,10 +106,12 @@ create_criteria_table <- function() {
 #' Create Model Weights tables
 #'
 #' Displays the model weights, constant, Null log-likelihood and estimated model log-likelihood and
-#' adjusted rho-squared of the different models. Saves the table as `data/tables/model_weights_<group>.html` using the
+#' adjusted rho-squared of the binary and multinomial models for each model separately and a large
+#' combined table for across all groups of each model type.
+#' Saves the tables as `extdata/tables/<binary|multinomial>/model_weights_<group>.html` using the
 #' gt package.
 #' @return
-#' gt table of last model
+#' list of gt tables
 #' @export
 #'
 #' @examples
@@ -117,121 +119,482 @@ create_criteria_table <- function() {
 create_model_weights_tables <- function() {
 
   groups <- c(
-    'aggregate' = "Aggregate",
+    'aggregate' = "All participants",
     'aumc' = "Amsterdam UMC",
     'olvg' = "OLVG",
     'intensivists' = "Intensivists",
     'fellows' = "Fellows"
   )
 
-  # create a vectorized version of function to allow using in dplyr functions
-  coefficient_to_variable_V <- Vectorize(coefficient_to_variable)
+  modeltypes <- c('binary', 'multinomial')
 
-  for(group in names(groups)) {
+  cat("Creating model weights tables...\n")
 
-    model <- readRDS(
-      fs::path_package(
-        "extdata", "apollo", "binary", paste0("baitlist_", group, "_model.rds"),
-        package = "baitlist")
+  tables <- list()
+
+  # data directory
+  datadir <- fs::path_package(
+    "extdata", package = "baitlist")
+
+  for(modeltype in modeltypes) {
+
+    tables[[modeltype]] <- list()
+
+    # store combined table
+    all_wald <- list()
+
+    for(group in names(groups)) {
+
+      cat(paste0("Processing ", groups[group], " model (", modeltype, ")...\n"))
+
+      model <- readRDS(
+        fs::path(datadir, "apollo", modeltype, paste0("baitlist_", group, "_model.rds"))
+      )
+
+      wald <- read.csv(
+        fs::path(datadir, "apollo", modeltype, paste0("baitlist_", group, "_weights_wald.csv")
+        )
+      )
+
+      # add human readable names to data set
+      criteria <- readxl::read_excel(
+        fs::path(datadir, "model_criteria.xlsx")
+      ) %>%
+        dplyr::select(ID_Alternative, Name) %>%
+        dplyr::distinct() %>%
+        dplyr::rename(
+          "variable" = "ID_Alternative",
+          "name" = "Name"
+        )
+
+      # determine variable name
+      wald <- wald %>%
+        tidyr::extract(
+          col = coefficient_name,
+          into = c("variable", "variable_alternative", "constant_alternative"),
+          regex = "^(?:b_(.*?)(?:_(continue|timelimited))?|asc_(.*))$",
+          remove = FALSE
+        ) %>%
+        dplyr::mutate(
+          dplyr::across(
+            c(variable_alternative, constant_alternative),
+            ~ dplyr::na_if(.x, "")
+          ),
+          alternative = dplyr::coalesce(variable_alternative, constant_alternative)
+        )
+
+
+      # remove un-estimated constant(s)
+      wald <- wald %>%
+        dplyr::filter(!(
+          stringr::str_detect(coefficient_name, "^asc_") &
+            weight == 0
+        )
+        )
+
+      # join with criteria
+      wald <- wald %>%
+        dplyr::left_join(
+          criteria,
+          by = dplyr::join_by(variable)
+        ) %>%
+        dplyr::mutate(
+          name = dplyr::case_when(
+            stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
+            .default = name,
+          ),
+          type = dplyr::case_when(
+            stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
+            .default = "Criteria"
+          )
+        )
+
+      # add criterion order to tibble
+      wald <- wald %>%
+        dplyr::mutate(
+          .row_id = dplyr::row_number(),
+          .coef_id = dplyr::coalesce(variable)
+        ) %>%
+        dplyr::group_by(.coef_id) %>%
+        dplyr::mutate(.crit_order = min(.row_id)) %>%
+        dplyr::ungroup()
+
+
+      wald <- wald %>%
+        tibble::add_row(
+          name = "Null log-likelihood",
+          type = "Goodness of Fit",
+          weight = NA,
+          p_value = model$LL0[[1]]
+        ) %>%
+        tibble::add_row(
+          name = "Log-likelihood of estimated model",
+          type = "Goodness of Fit",
+          weight = NA,
+          p_value = model$LLout[[1]]
+        ) %>%
+        tibble::add_row(
+          name = "Adjusted $$\\rho^2$$",
+          type = "Goodness of Fit",
+          weight = NA,
+          p_value = model$adjRho2_0[[1]]
+        ) %>%
+         dplyr::mutate(
+          CI_low = weight - 1.96 * robust_se,
+          CI_high = weight + 1.96 * robust_se,
+          CI_95 = sprintf("[%.3f,&nbsp;%.3f]", CI_low, CI_high)
+        ) %>%
+        dplyr::mutate(
+          f_p_value = dplyr::case_when(
+            p_value < 0.0001 & p_value >= 0 ~ "< 0.0001",
+            .default = formatC(p_value, digits = 3, format = "fg")
+          )
+        ) %>%
+        dplyr::mutate(
+          f_weight = formatC(weight, digits = 3, format = "fg"),
+          f_robust_se = formatC(robust_se, digits = 3, format = "fg")
+        ) %>%
+        dplyr::mutate(
+          f_weight_se =
+            dplyr::case_when(
+              is.na(weight) ~ "",
+              .default = paste0(f_weight, "<br>(", f_robust_se, ")"),
+            ),
+          f_weight_ci =
+            dplyr::case_when(
+              is.na(weight) ~ "",
+              .default = paste0(f_weight, "<br>", CI_95),
+            )
+        )
+
+      # change labels
+      if (modeltype == "multinomial") {
+        wald <- wald %>%
+          dplyr::mutate(
+            alternative = dplyr::case_match(
+              alternative,
+              "continue" ~ "Continue",
+              "timelimited" ~ "Time-Limited",
+              .default = alternative
+            )
+          )
+      }
+
+      # store the processed wald table for later combination
+      all_wald[[group]] <- wald %>%
+        dplyr::select(
+          name,
+          weight,
+          p_value,
+          dplyr::any_of(if (modeltype == "multinomial") "alternative"),
+          .crit_order,
+          type,
+          f_weight_se,
+          f_weight_ci,
+          f_p_value)
+
+      if (modeltype == "multinomial") {
+        wald <- wald %>%
+          dplyr::group_by(type, name) %>%
+          dplyr::arrange(
+            factor(type, levels = c("Criteria", "Constant", "Goodness of Fit")),
+            .crit_order,
+            alternative
+          ) %>%
+          dplyr::mutate(
+            name = dplyr::if_else(
+              dplyr::row_number() == 1,
+              name,
+              ""
+            )
+          ) %>%
+          dplyr::ungroup()
+      }
+
+      table <- wald %>%
+        dplyr::select(
+          name,
+          dplyr::any_of(if (modeltype == "multinomial") "alternative"),
+          weight,
+          f_weight_se,
+          f_weight_ci,
+          f_p_value,
+          type
+        ) %>%
+        dplyr::group_by(type) %>%
+        dplyr::arrange(factor(type, levels = c("Criteria", "", "Goodness of Fit"))) %>%
+        gt::gt() %>%
+        gt::tab_row_group(
+          label = "Goodness of Fit",
+          rows = type == 'Goodness of Fit',
+          id = "group_gof"
+        ) %>%
+        gt::tab_row_group(
+          label = "",
+          rows = type == 'Constant',
+          id = "group_constant"
+        ) %>%
+        gt::tab_row_group(
+          label = "",
+          rows = type == 'Criteria',
+          id = "group_criteria"
+        ) %>%
+        gt::row_group_order(
+          groups = c("group_criteria", "group_constant", "group_gof")
+        ) %>%
+        gt::cols_align(
+          align = "right",
+          columns = f_p_value
+        ) %>%
+        gt::cols_align(
+          align = "center",
+          columns = c(f_weight_se, f_weight_ci)
+        ) %>%
+        gt::cols_label(
+          name = "Criteria",
+          gt::starts_with("alternative") ~ gt::md("Alternative"),
+          f_weight_se = gt::md("Weight<br>(Robust SE)"),
+          f_weight_ci = gt::md("Weight<br>[95% CI]"),
+          f_p_value = gt::md("<i>p</i> value")
+        ) %>%
+        gt::tab_header(
+          title = gt::md(paste0("*", groups[group], "* model"))
+        ) %>%
+        gt::tab_style(
+          style = list(
+            gt::cell_text(weight = "bold")
+          ),
+          location = list(
+            gt::cells_column_labels(
+              columns = dplyr::everything()
+            ),
+            gt::cells_row_groups()
+          )
+        ) %>%
+        gt::tab_options(
+          data_row.padding = gt::px(2)
+        ) %>%
+        gt::cols_width(
+          name ~ px(400),
+          everything() ~ gt::px(100)
+        ) %>%
+        gt::cols_hide(columns = c(weight, f_weight_se)) %>%
+        gt::sub_missing(
+          columns = everything(),
+          missing_text = ""
+        ) %>%
+        gt::fmt_markdown()
+
+      if (modeltype == 'multinomial') {
+        table <- table %>%
+          gt::cols_width(
+            alternative ~ px(150)
+          ) %>%
+          gt::tab_style(
+            style = gt::cell_borders(
+              sides = "top",
+              color = "transparent",
+              weight = gt::px(0)
+            ),
+            locations = gt::cells_body(
+              rows = name == "",   # continuation rows
+              columns = name
+            )
+          ) %>%
+          gt::tab_footnote(
+            footnote = gt::md("**Continue**: Continue life-sustaining therapy vs. Withdrawal"),
+            locations = gt::cells_body(
+              columns = "alternative",
+              rows = alternative == "Continue"
+            )
+          ) %>%
+          gt::tab_footnote(
+            footnote = gt::md("**Time-Limited**: Time-Limited Trial vs. Withdrawal"),
+            locations = gt::cells_body(
+              columns = "alternative",
+              rows = alternative == "Time-Limited"
+            )
+          )
+      }
+
+      # store in return list
+      tables[[modeltype]][[group]] <- table
+
+      table %>%
+        gt::gtsave(
+          filename = fs::path(datadir, "tables", modeltype, paste0("model_weights_", group, ".html"))
+        )
+    }
+
+    # combine all groups into one table
+    cat(paste0("Creating combined table across group (", modeltype, ")...\n"))
+    combined_list <- list()
+
+    for (g in names(all_wald)) {
+      df <- all_wald[[g]] %>%
+        dplyr::mutate(group = g)
+
+      combined_list[[g]] <- df
+    }
+
+    # one row per (name, type), columns per group and measure
+    combined <- dplyr::bind_rows(combined_list) %>%
+      tidyr::pivot_wider(
+        names_from  = group,
+        values_from = c(weight, p_value, f_weight_se, f_weight_ci, f_p_value),
+        names_glue  = "{group}_{.value}"
+      )
+
+    if (modeltype == "multinomial") {
+      combined <- combined %>%
+        dplyr::group_by(type, name) %>%
+        dplyr::arrange(
+          factor(type, levels = c("Criteria", "Constant", "Goodness of Fit")),
+          .crit_order,
+          alternative
+        ) %>%
+        dplyr::mutate(
+          name = dplyr::if_else(
+            dplyr::row_number() == 1,
+            name,
+            ""
+          )
+        ) %>%
+        dplyr::ungroup()
+    }
+
+    combined_table <- combined %>%
+      dplyr::select(-.crit_order) %>%
+      # calculate style helpers
+      dplyr::mutate(
+        is_negative    = dplyr::if_any(dplyr::matches("_weight$"), ~ .x < 0),
+        is_positive    = dplyr::if_any(dplyr::matches("_weight$"), ~ .x > 0),
+        is_significant = dplyr::if_any(dplyr::matches("_p_value$"), ~ .x < 0.05)
+      ) %>%
+      gt::gt(
+        rowname_col   = "name",
+        groupname_col = "type"
+        )
+
+    # Loop over groups
+    for (g in names(groups)) {
+
+      weight_col <- rlang::sym(paste0(g, "_weight"))
+      pval_col <- rlang::sym(paste0(g, "_p_value"))
+      display_col <- rlang::sym(paste0(g, "_f_weight_ci"))
+      alt_col <- rlang::sym("alternative")
+
+      combined_table <- combined_table %>%
+        gt::tab_spanner(
+          label   = groups[[g]],
+          columns = dplyr::matches(paste0("^", g, "_"))
+        ) %>%
+        gt::cols_align(
+          align = "right",
+          columns = dplyr::matches("_p_value$")
+        ) %>%
+        gt::cols_align(
+          align = "center",
+          columns = dplyr::matches("(_f_weight_se$|_f_weight_ci$)")
+        ) %>%
+        gt::cols_label(
+          !!paste0(g, "_f_weight_se") := gt::md("Weight<br>(Robust SE)"),
+          !!paste0(g, "_f_weight_ci") := gt::md("Weight<br>[95% CI]"),
+          !!paste0(g, "_f_p_value")   := gt::md("<i>p</i> value")
+        ) %>%
+
+        # Negative
+        gt::tab_style(
+          style = gt::cell_fill(color = "#F2DEDE"),
+          locations = gt::cells_body(
+            columns = !!display_col,
+            rows = !!weight_col < 0
+          )
+        ) %>%
+
+        # Positive
+        gt::tab_style(
+          style = gt::cell_fill(color = "#DFF0D8"),
+          locations = gt::cells_body(
+            columns = !!display_col,
+            rows = !!weight_col > 0
+          )
+        )
+
+        # Positive: yellow for timelimited
+        if (modeltype == "multinomial") {
+          combined_table <- combined_table %>%
+            gt::tab_style(
+              style = gt::cell_fill(color = "#FFF4C2"),
+              locations = gt::cells_body(
+                columns = !!display_col,
+                rows = (!!weight_col > 0) & (!!alt_col == "Time-Limited")
+              )
+            )
+        }
+
+      combined_table <- combined_table %>%
+
+        # Signficant: bold
+      gt::tab_style(
+        style = gt::cell_text(weight = "bold"),
+        locations = gt::cells_body(
+          columns = !!display_col,
+          rows = !!pval_col < 0.05
+        )
+      ) %>%
+
+        # Hide numeric columns *after* styling
+        gt::cols_hide(columns = c(
+          paste0(g, "_f_weight_se"),
+          paste0(g, "_weight"),
+          paste0(g, "_p_value")
+        ))
+    }
+
+    # Yellow swatch only for multinomial
+    yellow_legend <- if (modeltype == "multinomial") {
+      paste0(
+        "&nbsp;<span style='background-color:#FFF4C2;",
+        "border:1px solid #E0D7A8;",
+        "padding:2px 6px;",
+        "border-radius:3px;'>Yellow</span> = Effect towards Time-Limited Trial,&nbsp;"
+      )
+    } else {
+      ""
+    }
+
+    legend_html <- paste0(
+      "<span style='background-color:#F2DEDE;",
+      "border:1px solid #C8BFBF;",
+      "padding:2px 6px;",
+      "border-radius:3px;'>Red</span> = Effect towards Withdrawal,&nbsp;",
+
+      yellow_legend,
+
+      "<span style='background-color:#DFF0D8;",
+      "border:1px solid #B7C8B7;",
+      "padding:2px 6px;",
+      "border-radius:3px;'>Green</span> = Effect towards Continue,&nbsp;",
+
+      "<span style='font-weight:bold;'>Bold</span> = *p* < 0.05"
     )
 
-    wald <- read.csv(
-      fs::path_package(
-        "extdata", "apollo", "binary", paste0("baitlist_", group, "_weights_wald.csv"),
-        package = "baitlist")
-    )
 
-    # add human readable names to data set
-    criteria <- readxl::read_excel(
-      fs::path_package(
-        "extdata", "model_criteria.xlsx",
-        package = "baitlist"
-      )
-    ) %>%
-      dplyr::select(ID_Alternative, Name) %>%
-      dplyr::distinct() %>%
-      dplyr::rename(
-        "variable" = "ID_Alternative",
-        "name" = "Name"
+    combined_table <- combined_table %>%
+      gt::opt_row_striping() %>%
+      gt::tab_source_note(
+        source_note = gt::md(legend_html)
       )
 
-    # determine variable name (e.g. strip "b_" from name)
-    wald <- wald %>%
-      dplyr::mutate(variable = coefficient_to_variable_V(coefficient_name)) %>%
-      dplyr::mutate_at("variable", as.character)
+    combined_table <- combined_table %>%
+      gt::cols_hide(columns = c(
+        "is_negative",
+        "is_positive",
+        "is_significant"
+        ))
 
-    # remove un-estimated constant(s)
-    wald <- wald %>%
-      dplyr::filter(!(
-        stringr::str_detect(coefficient_name, "^asc_") &
-        weight == 0
-        )
-      )
-
-    # join with criteria
-    wald <- wald %>%
-      dplyr::left_join(
-        criteria,
-        by = dplyr::join_by(variable)
-      ) %>%
-      dplyr::mutate(
-        name = dplyr::case_when(
-          stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
-          .default = name,
-        ),
-        type = dplyr::case_when(
-          stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
-          .default = "Criteria"
-        )
-      )
-
-    wald <- wald %>%
-      tibble::add_row(
-        name = "Null log-likelihood",
-        type = "Goodness of Fit",
-        weight = NA,
-        p_value = model$LL0[[1]]
-      ) %>%
-      tibble::add_row(
-        name = "Log-likelihood of estimated model",
-        type = "Goodness of Fit",
-        weight = NA,
-        p_value = model$LLout[[1]]
-      ) %>%
-      tibble::add_row(
-        name = "Adjusted $$\\rho^2$$",
-        type = "Goodness of Fit",
-        weight = NA,
-        p_value = model$adjRho2_0[[1]]
-      ) %>%
-      dplyr::mutate(
-        f_p_value = dplyr::case_when(
-          p_value < 0.0001 & p_value >= 0 ~ "< 0.0001",
-          .default = formatC(p_value, digits = 3, format = "fg")
-        )
-      ) %>%
-      dplyr::mutate(
-        f_weight = formatC(weight, digits = 3, format = "fg"),
-        f_robust_se = formatC(robust_se, digits = 3, format = "fg")
-      ) %>%
-      dplyr::mutate(
-        f_weight_se =
-          dplyr::case_when(
-            is.na(weight) ~ "",
-            .default = paste0(f_weight, "<br>(", f_robust_se, ")"),
-        )
-      )
-
-    table <- wald %>%
-      dplyr::select(
-        name,
-        f_weight_se,
-        f_p_value,
-        type
-      ) %>%
-      dplyr::group_by(type) %>%
-      dplyr::arrange(factor(type, levels = c("Criteria", "", "Goodness of Fit"))) %>%
-      gt::gt() %>%
+    combined_table <- combined_table %>%
       gt::tab_row_group(
         label = "Goodness of Fit",
         rows = type == 'Goodness of Fit',
@@ -243,28 +606,15 @@ create_model_weights_tables <- function() {
         id = "group_constant"
       ) %>%
       gt::tab_row_group(
-        label = "",
+        label = "Criteria",
         rows = type == 'Criteria',
         id = "group_criteria"
       ) %>%
       gt::row_group_order(
         groups = c("group_criteria", "group_constant", "group_gof")
-        ) %>%
-      gt::cols_align(
-        align = "right",
-        columns = f_p_value
-      ) %>%
-      gt::cols_align(
-        align = "center",
-        columns = f_weight_se
-      ) %>%
-      gt::cols_label(
-        name = "Criteria",
-        f_weight_se = gt::md("Weight<br>(Robust SE)"),
-        f_p_value = gt::md("<i>p</i> value")
       ) %>%
       gt::tab_header(
-        title = gt::md(paste0("*", groups[group], "* model"))
+        title = gt::md("Model Weights Across All Groups")
       ) %>%
       gt::tab_style(
         style = list(
@@ -273,28 +623,54 @@ create_model_weights_tables <- function() {
         location = list(
           gt::cells_column_labels(
             columns = dplyr::everything()
-            ),
+          ),
           gt::cells_row_groups()
         )
       ) %>%
-      gt::tab_options(
-        data_row.padding = gt::px(2)
+      gt::cols_label(
+        name = "Criteria",
+        gt::starts_with("alternative") ~ gt::md("Alternative")
         ) %>%
-      gt::cols_width(
-        name ~ px(400),
-        everything() ~ gt::px(100)
+      gt::sub_missing(
+        columns = everything(),
+        missing_text = ""
       ) %>%
       gt::fmt_markdown()
 
-      table %>%
-        gt::gtsave(filename = fs::path_package(
-          "extdata", "tables", paste0("model_weights_", group, ".html"),
-          package = "baitlist")
+    if (modeltype == 'multinomial') {
+      combined_table <- combined_table %>%
+        gt::cols_width(
+          alternative ~ px(150)
+        ) %>%
+        gt::tab_footnote(
+          footnote = gt::md("**Continue**: Continue life-sustaining therapy vs. Withdrawal"),
+          locations = gt::cells_body(
+            columns = "alternative",
+            rows = alternative == "Continue"
+          )
+        ) %>%
+        gt::tab_footnote(
+          footnote = gt::md("**Time-Limited**: Time-Limited Trial vs. Withdrawal"),
+          locations = gt::cells_body(
+            columns = "alternative",
+            rows = alternative == "Time-Limited"
+          )
         )
+    }
+
+    # store in return list
+    group <- "across_groups"
+    tables[[modeltype]][[group]] <- combined_table
+
+    combined_table %>%
+      gt::gtsave(
+        filename = fs::path(datadir, "tables", modeltype, paste0("model_weights_", group, ".html"))
+      )
 
   }
 
-  return(table)
+  cat("Done.\n")
+  return(tables)
 
 }
 
