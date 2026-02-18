@@ -996,4 +996,246 @@ create_group_comparison_table <- function() {
   return(tables)
 }
 
+#' Create pooled group comparison table (interaction models)
+#'
+#' Uses pooled Apollo models with group interaction terms (d_*) to compare
+#' coefficients between subgroups for both binary and multinomial models.
+#'
+#' @return list of gt tables (binary and multinomial)
+#' @export
+create_pooled_group_comparison_tables <- function() {
+
+  comparisons <- list(
+    "Amsterdam UMC vs. OLVG" = list(
+      groups = c("aumc", "olvg")
+    ),
+    "Intensivists vs. Fellows" = list(
+      groups = c("intensivists", "fellows")
+    )
+  )
+
+  modeltypes <- c("binary", "multinomial")
+
+  tables <- list()
+
+  datadir <- fs::path_package("extdata", package = "baitlist")
+
+  for (modeltype in modeltypes) {
+
+    df_wald <- tibble::tibble()
+
+    for (title in names(comparisons)) {
+
+      comparison <- comparisons[[title]]
+      groups     <- comparison[["groups"]]
+      group1     <- groups[[1]]
+      group2     <- groups[[2]]
+      group_col  <- paste(groups, collapse = "_")
+
+      group1_name <- strsplit(title, split = " vs. ")[[1]][[1]]
+      group2_name <- strsplit(title, split = " vs. ")[[1]][[2]]
+
+      wald <- wald_interaction(group1, group2, modeltype)
+      df_wald <- df_wald %>%
+        dplyr::bind_rows(wald)
+    }
+
+    # Pivot wider to get one column per comparison
+    ids_cols <- c("name", "type", if (modeltype == "multinomial") "alternative")
+
+    df_wald <- df_wald %>%
+      tidyr::pivot_wider(
+        names_from  = c("group_col"),
+        names_sep   = ":",
+        values_from = c("f_wald", "f_p_raw", "f_p_value", "annotation"),
+        id_cols     = c(dplyr::all_of(ids_cols))
+      )
+
+    # Fake row spanners and ordering
+    if (modeltype == "multinomial") {
+      df_wald <- df_wald %>%
+        # only show interactions (for multinomial duplicated)
+        dplyr::filter(!(type == "Criteria" & alternative == "timelimited")) %>%
+        dplyr::mutate(
+          alternative = dplyr::case_match(
+            alternative,
+            "continue"    ~ "Continue",
+            "timelimited" ~ "Time-Limited",
+            .default      = alternative
+          )
+        ) %>%
+        dplyr::mutate(
+          name = dplyr::case_when(
+            type == "Constant" & alternative != "" ~ paste0(name, " - ", alternative),
+            TRUE ~ name
+          )
+        ) %>%
+        dplyr::group_by(type, name) %>%
+        dplyr::arrange(
+          factor(type, levels = c("Joint Test", "Criteria", "Constant")),
+          alternative
+        ) %>%
+        dplyr::mutate(
+          name = dplyr::if_else(
+            dplyr::row_number() == 1,
+            name,
+            ""
+          )
+        ) %>%
+        dplyr::ungroup()
+    } else {
+      df_wald <- df_wald %>%
+        dplyr::arrange(factor(type, levels = c("Joint Test", "Criteria", "Constant")))
+    }
+
+    # Build gt table
+    table <- df_wald %>%
+      gt::gt() %>%
+      gt::cols_hide("type") %>%
+      gt::tab_row_group(
+        label = "",
+        rows  = type == "Constant",
+        id    = "group_constant"
+      ) %>%
+      gt::tab_row_group(
+        label = "Individual Criteria",
+        rows  = type == "Criteria",
+        id    = "group_criteria"
+      ) %>%
+      gt::tab_row_group(
+        label = "",
+        rows  = type == "Joint Test",
+        id    = "group_joint"
+      ) %>%
+      gt::row_group_order(
+        groups = c("group_joint", "group_criteria", "group_constant")
+      ) %>%
+      gt::cols_align(
+        align   = "right",
+        columns = c(gt::starts_with("f_p_value"), gt::starts_with("f_p_raw"))
+      ) %>%
+      gt::cols_align(
+        align   = "center",
+        columns = gt::starts_with("f_wald")
+      ) %>%
+      gt::cols_label(
+        name = "Criteria",
+        gt::starts_with("alternative") ~ gt::md("Alternative"),
+        gt::starts_with("f_wald") ~ gt::md("Wald statistic"),
+        gt::starts_with("f_p_raw") ~ gt::md("Uncorrected *p* value"),
+        gt::starts_with("f_p_value") ~ gt::md("<i>p</i> value")
+      ) %>%
+      gt::tab_header(
+        title = gt::md(paste0("**Subgroup comparison - ", modeltype, " pooled interaction models**"))
+      ) %>%
+      gt::opt_align_table_header(align = "left") %>%
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold")
+        ),
+        location = list(
+          gt::cells_column_labels(columns = dplyr::everything()),
+          gt::cells_row_groups()
+        )
+      ) %>%
+      gt::tab_style(
+        style = gt::cell_borders(
+          sides  = "top",
+          color  = "transparent",
+          weight = gt::px(0)
+        ),
+        locations = gt::cells_body(
+          rows    = name == "",
+          columns = name
+        )
+      )
+
+    # Spanners per comparison
+    for (title in names(comparisons)) {
+      comparison <- comparisons[[title]]
+      groups     <- comparison[["groups"]]
+      group_col  <- paste(groups, collapse = "_")
+
+      table <- table %>%
+        gt::tab_spanner(
+          id     = paste0("spanner_", group_col),
+          label  = title,
+          columns = gt::ends_with(group_col)
+        ) %>%
+        gt::cols_merge(
+          columns = c(paste0("f_wald:", group_col), paste0("annotation:", group_col)),
+          pattern = "{1}<<{2}>>"
+        )
+    }
+
+    # Footnotes based on annotations
+    annotations <- df_wald %>%
+      dplyr::select(dplyr::starts_with("annotation"))
+
+    footnotes_needed <- annotations %>%
+      unlist(use.names = FALSE) %>%
+      unique() %>%
+      setdiff(NA)
+
+
+    footnotes_needed <- unique(footnotes_needed)
+    footnotes <- c()
+    if ("*" %in% footnotes_needed) {
+      footnotes <- c(footnotes, "&ast; *p* < 0.05")
+    }
+    if ("**" %in% footnotes_needed) {
+      footnotes <- c(footnotes, "&ast;&ast; *p* < 0.01")
+    }
+    if ("***" %in% footnotes_needed) {
+      footnotes <- c(footnotes, "&ast;&ast;&ast; *p* < 0.001")
+    }
+
+    table <- table %>%
+      gt::tab_options(
+        data_row.padding = gt::px(2)
+      ) %>%
+      gt::cols_width(
+        name ~ gt::px(400),
+        dplyr::everything() ~ gt::px(100)
+      ) %>%
+      gt::sub_missing(
+        columns = everything(),
+        missing_text = ""
+      ) %>%
+      gt::tab_footnote(
+        footnote = gt::md(paste(footnotes, collapse = "; "))
+      )
+
+    if ("alternative" %in% colnames(df_wald)) {
+      table <- table %>%
+        gt::cols_hide(columns = "alternative") %>%
+        gt::cols_width(
+          alternative ~ gt::px(150)
+        ) %>%
+        gt::tab_footnote(
+          footnote = gt::md("**Continue**: Continue life-sustaining therapy vs. Withdrawal"),
+          locations = gt::cells_body(
+            columns = "name",
+            rows    = type == "Constant" & alternative == "Continue"
+          )
+        ) %>%
+        gt::tab_footnote(
+          footnote = gt::md("**Time-Limited**: Time-Limited Trial vs. Withdrawal"),
+          locations = gt::cells_body(
+            columns = "name",
+            rows    = type == "Constant" & alternative == "Time-Limited"
+          )
+        )
+    }
+
+    table %>%
+      gt::gtsave(
+        filename = fs::path(datadir, "tables", modeltype, "table_pooled_group_comparison.html")
+      )
+
+    tables[[modeltype]] <- table
+  }
+
+  return(tables)
+}
 
