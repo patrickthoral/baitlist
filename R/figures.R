@@ -1,14 +1,27 @@
 #' Plot Relative Importance
 #'
-#' Creates a plot showing the relative factor importance using Maximum Utility Contribution for the aggregate
-#' model. Saves the plot as png and svg in the `data\figures` folder.
+#' Creates plots showing the relative factor importance using Maximum Utility Contribution for the aggregate
+#' model for both the binary and multinomial models of all participants and subgroups.
+#' Saves the plot as png and svg in the `extdata\figures` folder.
 #' @return
-#' ggplot object
+#' list of ggplots
 #' @export
 #'
 #' @examples
 #' plot_relative_importance()
 plot_relative_importance <- function() {
+
+  groups <- c(
+    'aggregate' = "All Participants",
+    'aumc' = "Amsterdam UMC",
+    'olvg' = "OLVG",
+    'intensivists' = "Intensivists",
+    'fellows' = "Fellows"
+  )
+
+  modeltypes <- c("binary", "multinomial")
+
+  cat("Creating relative importance plots...\n")
 
   # from R package ggthemes "Classic Cyclic"
   colors = c(
@@ -27,114 +40,192 @@ plot_relative_importance <- function() {
     "#6F63BBFF"
   )
 
+  plots <- list()
 
-  group <- "aggregate"
-  muc <- read.csv(
-    fs::path_package(
-      "extdata/feature_importance/maximum_utility_contribution/binary", paste0(group, ".csv"),
-      package = "baitlist")
-  )
+  # data directory
+  datadir <- fs::path_package(
+    "extdata", package = "baitlist")
 
-  # add human readable names to data set
-  criteria <- readxl::read_excel(
-    fs::path_package(
-      "extdata", "model_criteria.xlsx",
-      package = "baitlist")
-    ) %>%
-    dplyr::select(ID_Alternative, Name) %>%
-    dplyr::distinct() %>%
-    dplyr::rename(
-      "variable" = "ID_Alternative",
-      "name" = "Name"
-    )
+  for(modeltype in modeltypes) {
 
-  muc <- muc %>%
-    dplyr::left_join(
-      criteria,
-      by = dplyr::join_by(variable)
+    for(group in names(groups)) {
+
+      cat(paste0("Processing ", groups[group], " model (", modeltype, ")...\n"))
+
+      muc <- read.csv(
+        fs::path(datadir, "feature_importance", "maximum_utility_contribution", modeltype, paste0(group, ".csv"))
       )
 
+      # add human readable names to data set
+      criteria <- readxl::read_excel(
+        fs::path(datadir, "model_criteria.xlsx")
+      ) %>%
+        dplyr::select(ID_Alternative, Name) %>%
+        dplyr::distinct() %>%
+        dplyr::rename(
+          "variable" = "ID_Alternative",
+          "name" = "Name"
+        )
 
-  plt <- ggplot2::ggplot(
-    data = muc,
-    mapping = ggplot2::aes(
-      x = factor(name, levels=rev(name)),
-      y = importance_pct,
-      fill = factor(name, levels=name)
-      )
-    ) +
+      muc <- muc %>%
+        dplyr::left_join(
+          criteria,
+          by = dplyr::join_by(variable)
+        )
 
-    # stat = "identity" prevents sorting the variable names
-    ggplot2::geom_bar(stat = "identity") +
-    ggplot2::scale_fill_manual(values = rev(colors)) +
-    ggplot2::labs(
-      title = "Factor Importance",
-      x = NULL,
-      y = "Relative importance (%)"
-    ) +
+      if(modeltype == 'binary') {
 
-    # add percentage labels next to bars
-    ggplot2::geom_text(
-      ggplot2::aes(
-        label = round(importance_pct,1)),
-      size = 10/ggplot2::.pt,
-      hjust = -0.2) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(
-      axis.text = ggplot2::element_text(size=10),
-      legend.position = "none", # hide legend,
-      panel.grid.major.x = ggplot2::element_line(
-        color = 'lightgrey',
-        linewidth = 0.25,
-        linetype = 2
-        ),
-      panel.grid.minor.x = ggplot2::element_blank(), # hide minor vertical grid lines
-      panel.grid.major.y = ggplot2::element_blank(), # hide horizontal grid lines
-      plot.title = ggplot2::element_text(hjust = 0.5) # centered horizontally
-      ) +
-    ggplot2::scale_y_continuous(
-      expand = ggplot2::expansion(mult = c(0, .1)),
-      breaks = seq(0, 30, by = 5)
-    ) +
-    ggplot2::coord_flip() # flip x and y to allow for horizontal bar chart"
+        plt <- ggplot2::ggplot(
+          data = muc,
+          mapping = ggplot2::aes(
+            x = factor(name, levels=rev(name)),
+            y = importance_pct,
+            fill = factor(name, levels=name)
+          )
+        ) +
 
-  file_types <- c('png', 'svg')
+          # stat = "identity" prevents sorting the variable names
+          ggplot2::geom_bar(stat = "identity") +
+          ggplot2::scale_fill_manual(values = rev(colors)) +
+          ggplot2::labs(
+            title = paste0("Factor Importance - ", groups[group]),
+            x = NULL,
+            y = "Relative importance (%)"
+          ) +
 
-  for(file_type in file_types) {
-    ggplot2::ggsave(
-      fs::path_package(
-        "extdata", "figures", paste0("factor_importance_", group, ".", file_type),
-        package = "baitlist"),
-      plot = plt,
-      width = 9,
-      height = 7,
-      dpi = 300,
-      create.dir = TRUE)
+          # add percentage labels next to bars
+          ggplot2::geom_text(
+            ggplot2::aes(
+              label = round(importance_pct,1)),
+            size = 10/ggplot2::.pt,
+            hjust = -0.2) +
+          ggplot2::theme_bw() +
+          ggplot2::theme(
+            axis.text = ggplot2::element_text(size=10),
+            legend.position = "none", # hide legend,
+            panel.grid.major.x = ggplot2::element_line(
+              color = 'lightgrey',
+              linewidth = 0.25,
+              linetype = 2
+            ),
+            panel.grid.minor.x = ggplot2::element_blank(), # hide minor vertical grid lines
+            panel.grid.major.y = ggplot2::element_blank(), # hide horizontal grid lines
+            plot.title = ggplot2::element_text(hjust = 0.5) # centered horizontally
+          ) +
+          ggplot2::scale_y_continuous(
+            expand = ggplot2::expansion(mult = c(0, .1)),
+            breaks = seq(0, 30, by = 5)
+          ) +
+          ggplot2::coord_flip() # flip x and y to allow for horizontal bar chart"
+      }
+      else if(modeltype == 'multinomial') {
+
+        # change the labels
+        muc$alternative <- dplyr::recode(
+          muc$alternative,
+          "continue" = "Continue vs. Withdraw",
+          "timelimited" = "Time-Limited Trial vs. Withdraw"
+        )
+
+        # explicit label (value of importance) position
+        offset <- max(muc$importance_pct) * 0.0125
+        muc$label_pos <- muc$importance_pct + offset
+
+        plt <- ggplot2::ggplot(
+          data = muc,
+          mapping = ggplot2::aes(
+            x = factor(name, levels = rev(unique(name))),
+            y = importance_pct,
+            fill = factor(name, levels = unique(name)),
+            pattern = alternative
+          )
+        ) +
+
+          ggpattern::geom_col_pattern(
+            position = ggplot2::position_dodge2(
+              width = 0.8,
+              preserve = "single",
+              reverse = TRUE
+            ),
+            width = 0.8,
+
+            # pattern aesthetics
+            pattern_fill = "white",
+            pattern_colour = "white",     # match background
+            pattern_density = 0.5,
+            pattern_spacing = 0.01,
+            pattern_angle = 45,
+            pattern_size = 0.15           # thinner = no bleed
+          ) +
+
+          # remove fill legend
+          ggplot2::scale_fill_manual(values = rev(colors), guide = "none") +
+
+          ggpattern::scale_pattern_manual(values = c("none", "stripe")) +
+
+          ggplot2::labs(
+            title = paste0("Factor Importance - ", groups[group]),
+            x = NULL,
+            y = "Relative importance (%)",
+            pattern = "Alternative"
+          ) +
+
+          ggplot2::geom_text(
+            ggplot2::aes(
+              x = factor(name, levels = rev(unique(name))),
+              y = label_pos,
+              label = round(importance_pct, 1)),
+            position = ggplot2::position_dodge2(
+              width = 0.8,
+              preserve = "single",
+              reverse = TRUE
+            ),
+            hjust = 0,
+            size = 10/ggplot2::.pt
+          ) +
+
+          ggplot2::theme_bw() +
+          ggplot2::theme(
+            axis.text = ggplot2::element_text(size = 10),
+            legend.position = "top",
+            legend.direction = "horizontal",
+            panel.grid.major.x = ggplot2::element_line(
+              color = 'lightgrey',
+              linewidth = 0.25,
+              linetype = 2
+            ),
+            panel.grid.minor.x = ggplot2::element_blank(),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.title = ggplot2::element_text(hjust = 0.5)
+          ) +
+
+          ggplot2::scale_y_continuous(
+            expand = ggplot2::expansion(mult = c(0, .1)),
+            breaks = seq(0, 30, by = 5)
+          ) +
+
+          ggplot2::coord_flip()
+      }
+
+      file_types <- c('png', 'svg')
+
+      for(file_type in file_types) {
+        ggplot2::ggsave(
+          fs::path(datadir, "figures", modeltype, paste0("factor_importance_", group, ".", file_type)),
+          plot = plt,
+          width = 9,
+          height = 7,
+          dpi = 300,
+          create.dir = TRUE)
+      }
+
+      plots[[modeltype]][[group]] <- plt
+
+    }
+
   }
 
-  return(plt)
-}
-
-#' Converts apollo coefficient_name (b_) to variable name.
-#'
-#' @param coef_name
-#'
-#' @return
-#' variable name
-#' @export
-#'
-#' @examples
-#' variable <- coefficient_to_variable("b_age")
-coefficient_to_variable <- function(coef_name) {
-  name_split <- strsplit(coef_name, split="b_")[[1]]
-  if(length(name_split) > 1) {
-    variable_name <- name_split[[2]]
-
-    return(variable_name)
-  }
-  else {
-    return(NA)
-  }
+  return(plots)
 }
 
 #' Plots group comparison of coefficient weights
