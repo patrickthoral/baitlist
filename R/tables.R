@@ -676,10 +676,11 @@ create_model_weights_tables <- function() {
 
 #' Create group comparison table
 #'
-#' Creates table comparing coefficients weights with both groups using the Wald test.
+#' Creates tables for both the binary and multinomial models comparing
+#' coefficients weights with both groups using the Wald test.
 #' Saves the table as `data/tables/table_group_comparison.html`.
 #' @return
-#' gt table
+#' list of gt tables
 #' @export
 #'
 #' @examples
@@ -695,227 +696,304 @@ create_group_comparison_table <- function() {
     )
   )
 
-  # create a vectorized version of function to allow using in dplyr functions
-  coefficient_to_variable_V <- Vectorize(coefficient_to_variable)
+  modeltypes <- c('binary', 'multinomial')
 
-  df_wald <- tibble::tibble()
+  tables <- list()
 
-  for(title in names(comparisons)) {
-    comparison <- comparisons[[title]]
-    groups <- comparison[['groups']]
-    group1 <- groups[[1]]
-    group2 <- groups[[2]]
-    group_col <- paste(groups, collapse="_")
+  # data directory
+  datadir <- fs::path_package(
+    "extdata", package = "baitlist")
 
-    group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
-    group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
+  for(modeltype in modeltypes) {
 
-    wald <- read.csv(
-      fs::path_package(
-        "extdata", "wald", paste0(paste(groups, collapse="-"), ".csv"),
-        package = "baitlist")
-    )
+    df_wald <- tibble::tibble()
 
-    # determine variable name (e.g. strip "b_" from name)
-    wald <- wald %>%
-      dplyr::mutate(variable = coefficient_to_variable_V(coefficient_name)) %>%
-      dplyr::mutate_at("variable", as.character)
+    for(title in names(comparisons)) {
+      comparison <- comparisons[[title]]
+      groups <- comparison[['groups']]
+      group1 <- groups[[1]]
+      group2 <- groups[[2]]
+      group_col <- paste(groups, collapse="_")
 
-    # add human readable names to data set
-    criteria <- readxl::read_excel(
-      fs::path_package(
-        "extdata", "model_criteria.xlsx",
-        package = "baitlist")
-    ) %>%
-      dplyr::select(ID_Alternative, Name) %>%
-      dplyr::distinct() %>%
-      dplyr::rename(
-        "variable" = "ID_Alternative",
-        "name" = "Name"
+      group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
+      group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
+
+      wald <- read.csv(
+        fs::path(datadir, "wald", modeltype, paste0(paste(groups, collapse="-"), ".csv"))
       )
 
-    # remove un-estimated constant(s)
-    wald <- wald %>%
-      dplyr::filter(!(
-        stringr::str_detect(coefficient_name, "^asc_") &
-          is.na(wald)
-      )
-      )
-
-    # join with criteria
-    wald <- wald %>%
-      dplyr::left_join(
-        criteria,
-        by = dplyr::join_by(variable)
-      ) %>%
-      dplyr::mutate(
-        name = dplyr::case_when(
-          stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
-          .default = name,
-        ),
-        type = dplyr::case_when(
-          stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
-          .default = "Criteria"
-        )
-      )
-
-    # add significance annotation and formatting
-    wald <- wald %>%
-      dplyr::mutate(
-        annotation = dplyr::case_when(
-          p_value < 0.001 ~ '***',
-          p_value < 0.01 ~ '**',
-          p_value < 0.05 ~ '*',
-          .default = NA
-        )
-      ) %>%
-      dplyr::mutate(
-        f_p_value = dplyr::case_when(
-          p_value < 0.0001 & p_value >= 0 ~ "< 0.0001",
-          .default = formatC(p_value, digits = 3, format = "fg")
-        )
-      ) %>%
+      # determine variable name
+      wald <- wald %>%
+        tidyr::extract(
+          col = coefficient_name,
+          into = c("variable", "variable_alternative", "constant_alternative"),
+          regex = "^(?:b_(.*?)(?:_(continue|timelimited))?|asc_(.*))$",
+          remove = FALSE
+        ) %>%
         dplyr::mutate(
-          f_wald = formatC(wald, digits = 3, format = "fg"),
-          group_col = group_col
+          dplyr::across( # set to NA if ""
+            c(variable_alternative, constant_alternative), ~ dplyr::na_if(.x, "")
+            ),
+          alternative = dplyr::coalesce(variable_alternative, constant_alternative)
+          )
+
+      # add human readable names to data set
+      criteria <- readxl::read_excel(
+        fs::path(datadir, "model_criteria.xlsx")
+      ) %>%
+        dplyr::select(ID_Alternative, Name) %>%
+        dplyr::distinct() %>%
+        dplyr::rename(
+          "variable" = "ID_Alternative",
+          "name" = "Name"
         )
 
-    # only keep needed columns
-    wald <- wald %>%
-      dplyr::select(
-        name,
-        f_wald,  # use pre-formatted columns
-        f_p_value, # use pre-formatted columns
-        annotation,
-        type,
-        group_col
+      # remove un-estimated constant(s)
+      wald <- wald %>%
+        dplyr::filter(
+          !(stringr::str_detect(coefficient_name, "^asc_") & is.na(wald))
+        )
+
+      # join with criteria
+      wald <- wald %>%
+        dplyr::left_join(
+          criteria,
+          by = dplyr::join_by(variable)
+        ) %>%
+        dplyr::mutate(
+          name = dplyr::case_when(
+            stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
+            .default = name,
+          ),
+          type = dplyr::case_when(
+            stringr::str_detect(coefficient_name, "^asc_") ~ "Constant",
+            .default = "Criteria"
+          )
+        )
+
+      # add significance annotation and formatting
+      wald <- wald %>%
+        dplyr::mutate(
+          annotation = dplyr::case_when(
+            p_value < 0.001 ~ '***',
+            p_value < 0.01 ~ '**',
+            p_value < 0.05 ~ '*',
+            .default = NA
+          )
+        ) %>%
+        dplyr::mutate(
+          f_p_value = dplyr::case_when(
+            p_value < 0.0001 & p_value >= 0 ~ "< 0.0001",
+            .default = formatC(p_value, digits = 3, format = "fg")
+          )
+        ) %>%
+          dplyr::mutate(
+            f_wald = formatC(wald, digits = 3, format = "fg"),
+            group_col = group_col
+          )
+
+      # only keep needed columns
+      cols <- c(
+        "name",
+        if(modeltype == 'multinomial') "alternative",
+        "f_wald",  # use pre-formatted columns
+        "f_p_value", # use pre-formatted columns
+        "annotation",
+        "type",
+        "group_col"
       )
 
-    # merge/concatenate tibbles
+      wald <- wald %>%
+        dplyr::select(cols)
+
+      # merge/concatenate tibbles
+      df_wald <- df_wald %>%
+        dplyr::bind_rows(wald)
+    }
+
+    ids_cols <- c("name", "type", if(modeltype == 'multinomial') "alternative")
+
     df_wald <- df_wald %>%
-      dplyr::bind_rows(wald)
-  }
-
-  df_wald <- df_wald %>%
-    tidyr::pivot_wider(
-      names_from = c("group_col"),
-      names_sep = ":",
-      values_from = c("f_wald", "f_p_value", "annotation")
-    )
-
-  table <- df_wald %>%
-    dplyr::group_by(type) %>%
-    dplyr::arrange(factor(type, levels = c("Criteria", "Constant"))) %>%
-    gt::gt() %>%
-    gt::tab_row_group(
-      label = "",
-      rows = type == 'Constant',
-      id = "group_constant"
-    ) %>%
-    gt::tab_row_group(
-      label = "",
-      rows = type == 'Criteria',
-      id = "group_criteria"
-    ) %>%
-    gt::row_group_order(
-      groups = c("group_criteria", "group_constant")
-    ) %>%
-    gt::cols_align(
-      align = "right",
-      columns = gt::starts_with("f_p_value")
-    ) %>%
-    gt::cols_align(
-      align = "center",
-      columns = gt::starts_with("f_wald")
-    ) %>%
-    gt::cols_label(
-      name = "Criteria",
-      gt::starts_with("f_wald") ~ gt::md("Wald statistic"),
-      gt::starts_with("f_p_value") ~ gt::md("<i>p</i> value")
-    ) %>%
-    # DOES NOT function correctly: use formatting in tibble before feeding to gt
-    # gt::fmt_number(decimals = 3, drop_trailing_zeros = TRUE, columns = c(wald, p_value)) %>%
-    gt::tab_header(
-      title = gt::md(paste0("**Subgroup comparison**"))
-    ) %>%
-    gt::opt_align_table_header(align = "left") %>%
-    gt::tab_style(
-      style = list(
-        gt::cell_text(weight = "bold")
-      ),
-      location = list(
-        gt::cells_column_labels(
-          columns = dplyr::everything()
-        ),
-        gt::cells_row_groups()
+      tidyr::pivot_wider(
+        names_from = c("group_col"),
+        names_sep = ":",
+        values_from = c("f_wald", "f_p_value", "annotation"),
+        id_cols = c(ids_cols)
       )
-    )
 
-  # create spanners for each comparison
-  for(title in names(comparisons)) {
-    comparison <- comparisons[[title]]
-    groups <- comparison[['groups']]
-    group_col <- paste(groups, collapse="_")
+    # create 'fake' row spanners since gt does not support them
+    if (modeltype == "multinomial") {
+      df_wald <- df_wald %>%
+        dplyr::mutate(
+          alternative = dplyr::case_match(
+            alternative,
+            "continue" ~ "Continue",
+            "timelimited" ~ "Time-Limited",
+            .default = alternative
+          )
+        ) %>%
+        dplyr::group_by(type, name) %>%
+        dplyr::arrange(factor(type, levels = c("Criteria", "Constant")), name, alternative) %>%
+        dplyr::mutate(
+          name = dplyr::if_else(
+            dplyr::row_number() == 1,
+            name,
+            ""   # hide repeated criteria labels
+          )
+        ) %>%
+        dplyr::ungroup()
+    }
+    else {
+      df_wald <- df_wald %>%
+        dplyr::arrange(factor(type, levels = c("Criteria", "Constant")))
+    }
 
-    table <- table %>%
-      gt::tab_spanner(
-        id = paste0("spanner_", group_col),
-        label = title,
-        columns = gt::ends_with(group_col)
+    table <- df_wald %>%
+      gt::gt() %>%
+      gt::cols_hide("type") %>%
+      gt::tab_row_group(
+        label = "",
+        rows = type == 'Constant',
+        id = "group_constant"
       ) %>%
-      # add asterisks to Wald if significant
-      gt::cols_merge(
-        columns = c(paste0("f_wald:", group_col), paste0("annotation:", group_col)),
-        pattern = "{1}<<{2}>>"
+      gt::tab_row_group(
+        label = "",
+        rows = type == 'Criteria',
+        id = "group_criteria"
+      ) %>%
+      gt::row_group_order(
+        groups = c("group_criteria", "group_constant")
+      ) %>%
+      gt::cols_align(
+        align = "right",
+        columns = gt::starts_with("f_p_value")
+      ) %>%
+      gt::cols_align(
+        align = "center",
+        columns = gt::starts_with("f_wald")
+      ) %>%
+      gt::cols_label(
+        name = "Criteria",
+        gt::starts_with("alternative") ~ gt::md("Alternative"),
+        gt::starts_with("f_wald") ~ gt::md("Wald statistic"),
+        gt::starts_with("f_p_value") ~ gt::md("<i>p</i> value")
+      ) %>%
+      gt::tab_header(
+        title = gt::md(paste0("**Subgroup comparison**"))
+      ) %>%
+      gt::opt_align_table_header(align = "left") %>%
+      gt::tab_style(
+        style = list(
+          gt::cell_text(weight = "bold")
+        ),
+        location = list(
+          gt::cells_column_labels(
+            columns = dplyr::everything()
+          ),
+          gt::cells_row_groups()
+        )
+        ) %>%
+      gt::tab_style(
+        style = gt::cell_borders(
+          sides = "top",
+          color = "transparent",
+          weight = gt::px(0)
+        ),
+        locations = gt::cells_body(
+          rows = name == "",   # continuation rows
+          columns = name
+        )
       )
-  }
 
-  # create significance footnote based on actual annotations
-  annotations <- df_wald %>%
-    dplyr::select(dplyr::starts_with("annotation"))
+    # create spanners for each comparison
+    for(title in names(comparisons)) {
+      comparison <- comparisons[[title]]
+      groups <- comparison[['groups']]
+      group_col <- paste(groups, collapse="_")
 
-  footnotes_needed <- c()
-  for(col in colnames(annotations)) {
-    footnotes_needed <- c(
-      footnotes_needed,
-      annotations[col] %>%
-        tidyr::drop_na() %>%
-        unique() %>%
-        dplyr::pull()
+      table <- table %>%
+        gt::tab_spanner(
+          id = paste0("spanner_", group_col),
+          label = title,
+          columns = gt::ends_with(group_col)
+        ) %>%
+        # add asterisks to Wald if significant
+        gt::cols_merge(
+          columns = c(paste0("f_wald:", group_col), paste0("annotation:", group_col)),
+          pattern = "{1}<<{2}>>"
+        )
+    }
 
-    )
-  }
+    # create significance footnote based on actual annotations
+    annotations <- df_wald %>%
+      dplyr::select(dplyr::starts_with("annotation"))
 
-  footnotes_needed <- unique(footnotes_needed)
-  footnotes <- c()
-  if("*" %in% footnotes_needed) {
-    footnotes <- c(footnotes, "&ast; *p* < 0.05")
-  }
-  if("**" %in% footnotes_needed) {
-    footnotes <- c(footnotes, "&ast;&ast; *p* < 0.01")
-  }
-  if("***" %in% footnotes_needed) {
-    footnotes <- c(footnotes, "&ast;&ast;&ast; *p* < 0.001")
-  }
+    footnotes_needed <- c()
+    for(col in colnames(annotations)) {
+      footnotes_needed <- c(
+        footnotes_needed,
+        annotations[col] %>%
+          tidyr::drop_na() %>%
+          unique() %>%
+          dplyr::pull()
 
-  # add footnotes to table and set column widths
-  table <- table %>%
-    gt::tab_options(
-      data_row.padding = gt::px(2)
-    ) %>%
-    gt::cols_width(
-      name ~ px(400),
-      everything() ~ gt::px(100)
-    ) %>%
-    gt::tab_footnote(
-      footnote = gt::md(paste(footnotes, collapse = "; "))
+      )
+    }
+
+    footnotes_needed <- unique(footnotes_needed)
+    footnotes <- c()
+    if("*" %in% footnotes_needed) {
+      footnotes <- c(footnotes, "&ast; *p* < 0.05")
+    }
+    if("**" %in% footnotes_needed) {
+      footnotes <- c(footnotes, "&ast;&ast; *p* < 0.01")
+    }
+    if("***" %in% footnotes_needed) {
+      footnotes <- c(footnotes, "&ast;&ast;&ast; *p* < 0.001")
+    }
+
+    # add footnotes to table and set column widths
+    table <- table %>%
+      gt::tab_options(
+        data_row.padding = gt::px(2)
+      ) %>%
+      gt::cols_width(
+        name ~ px(400),
+        everything() ~ gt::px(100)
+      ) %>%
+      gt::tab_footnote(
+        footnote = gt::md(paste(footnotes, collapse = "; "))
+        )
+
+    if ("alternative" %in% colnames(df_wald)) {
+      table <- table %>%
+        gt::cols_width(
+          alternative ~ px(150)
+        ) %>%
+        gt::tab_footnote(
+          footnote = gt::md("**Continue**: Continue life-sustaining therapy vs. Withdrawal"),
+          locations = gt::cells_body(
+            columns = "alternative",
+            rows = alternative == "Continue"
+          )
+        ) %>%
+        gt::tab_footnote(
+          footnote = gt::md("**Time-Limited**: Time-Limited Trial vs. Withdrawal"),
+          locations = gt::cells_body(
+            columns = "alternative",
+            rows = alternative == "Time-Limited"
+          )
+        )
+    }
+
+    table %>%
+      gt::gtsave(filename = fs::path(datadir, "tables", modeltype, "table_group_comparison.html")
       )
 
-  table %>%
-    gt::gtsave(filename = fs::path_package(
-      "extdata", "tables", "table_group_comparison.html",
-      package = "baitlist")
-    )
+    tables[[modeltype]] <- table
+  }
 
-  return(table)
+  return(tables)
 }
+
+
