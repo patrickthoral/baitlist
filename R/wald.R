@@ -135,67 +135,6 @@ compare_models <- function() {
     } # end comparison groups
 
   } # end model types
-
-      coef2_values <- append(coef2_values, c2)
-      se2_values <- append(se2_values, s2)
-
-      wald_stats <- append(wald_stats, wald_stat)
-      p_values <- append(p_values, p_value)
-
-      if(note == '*') {
-        notes <- append(notes, note)
-      }
-      else {
-        notes <- append(notes, NA)
-      }
-
-      cat(
-        paste0(
-          c_name,
-          " (",
-          signif(c1, digits=3),
-          " vs. ",
-          signif(c2, digits=3),
-          "), Wald: ", signif(wald_stat, digits=3),
-          ", p = ", signif(p_value, digits=3),
-          note,
-          "\n"
-        )
-      )
-    }
-
-    coef1_value_name = paste0('coef_', comparisons[[title]][1])
-    se1_value_name = paste0('se_coef_', comparisons[[title]][1])
-    coef2_value_name = paste0('coef_', comparisons[[title]][2])
-    se2_value_name = paste0('se_coef_', comparisons[[title]][2])
-
-    tbl_wald <-  dplyr::tibble(coefficient_name=coef_names,
-                               coef1_value=coef1_values,
-                               se1_value=se1_values,
-                               coef2_value=coef2_values,
-                               se2_value=se2_values,
-                               wald = wald_stats,
-                               p_value = p_values,
-                               sign = notes) %>%
-      dplyr::rename(!!coef1_value_name :=coef1_value,
-                    !!se1_value_name :=se1_value,
-                    !!coef2_value_name :=coef2_value,
-                    !!se2_value_name :=se2_value
-                    )
-
-    # print Wald stats
-    # print(tbl_wald)
-
-    # save Wald stats to disk
-    write.csv(
-      tbl_wald,
-      fs::path_package(
-        "extdata", "wald", paste0(paste(comparisons[[title]], collapse="-"), ".csv"),
-        package = "baitlist"),
-      row.names = FALSE
-    )
-
-    cat(paste0("\n\n" ))
-
-  }
 }
+
+
