@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @examples
-#' create_criteria_table()
+#' baitlist::create_criteria_table()
 create_criteria_table <- function() {
 
   # data directory
@@ -74,18 +74,18 @@ create_criteria_table <- function() {
       ) %>%
     # Bold headers + bold group label
     gt::tab_style(
-      style = cell_text(weight = "bold"),
-      locations = cells_column_labels(everything())
+      style = gt::cell_text(weight = "bold"),
+      locations = gt::cells_column_labels(dplyr::everything())
     ) %>%
     gt::tab_style(
-      style = cell_text(weight = "bold"),
-      locations = cells_row_groups()
+      style = gt::cell_text(weight = "bold"),
+      locations = gt::cells_row_groups()
     ) %>%
 
     # Optional: cleaner spacing
     gt::tab_options(
-      table.font.size = px(14),
-      data_row.padding = px(6),
+      table.font.size = gt::px(14),
+      data_row.padding = gt::px(6),
       row_group.as_column = FALSE
     ) %>%
 
@@ -115,7 +115,8 @@ create_criteria_table <- function() {
 #' @export
 #'
 #' @examples
-#' create_model_weights_tables()
+#' tables <- baitlist::create_model_weights_tables()
+#' tables$binary$aggregate
 create_model_weights_tables <- function() {
 
   groups <- c(
@@ -151,7 +152,7 @@ create_model_weights_tables <- function() {
         fs::path(datadir, "apollo", modeltype, paste0("baitlist_", group, "_model.rds"))
       )
 
-      wald <- read.csv(
+      wald <- utils::read.csv(
         fs::path(datadir, "apollo", modeltype, paste0("baitlist_", group, "_weights_wald.csv")
         )
       )
@@ -388,7 +389,7 @@ create_model_weights_tables <- function() {
       if (modeltype == 'multinomial') {
         table <- table %>%
           gt::cols_width(
-            alternative ~ px(150)
+            alternative ~ gt::px(150)
           ) %>%
           gt::tab_style(
             style = gt::cell_borders(
@@ -640,7 +641,7 @@ create_model_weights_tables <- function() {
     if (modeltype == 'multinomial') {
       combined_table <- combined_table %>%
         gt::cols_width(
-          alternative ~ px(150)
+          alternative ~ gt::px(150)
         ) %>%
         gt::tab_footnote(
           footnote = gt::md("**Continue**: Continue life-sustaining therapy vs. Withdrawal"),
@@ -684,8 +685,9 @@ create_model_weights_tables <- function() {
 #' @export
 #'
 #' @examples
-#' create_group_comparison_table()
-create_group_comparison_table <- function() {
+#' tables <- baitlist::create_group_comparison_tables()
+#' tables$binary
+create_group_comparison_tables <- function() {
 
   comparisons <- list(
     'Amsterdam UMC vs. OLVG'=list(
@@ -718,7 +720,7 @@ create_group_comparison_table <- function() {
       group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
       group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
 
-      wald <- read.csv(
+      wald <- utils::read.csv(
         fs::path(datadir, "wald", modeltype, paste0(paste(groups, collapse="-"), ".csv"))
       )
 
@@ -1003,6 +1005,10 @@ create_group_comparison_table <- function() {
 #'
 #' @return list of gt tables (binary and multinomial)
 #' @export
+#'
+#' @examples
+#' tables <- baitlist::create_pooled_group_comparison_tables()
+#' tables$binary
 create_pooled_group_comparison_tables <- function() {
 
   comparisons <- list(

@@ -73,7 +73,11 @@ feature_importance_all <- function() {
 #' @export
 #'
 #' @examples
-#' baitlist::feature_importance(method="maximum_utility_contribution", modeltype="multinomial", group="aggregate")
+#' baitlist::feature_importance(
+#'   method="maximum_utility_contribution",
+#'   modeltype="multinomial",
+#'   group="aggregate"
+#'   )
 feature_importance <- function(
     method="maximum_utility_contribution",
     modeltype="binary",
@@ -123,8 +127,8 @@ feature_importance <- function(
 
       if(method == 'standardized_coefficients') {
         # calculate standardized coefficients
-        sd_x <- append(sd_x, sd(data[[variable_name]]))
-        sd_y <- append(sd_y, sd(data[['CHOICE_MULTINOMIAL']]))
+        sd_x <- append(sd_x, stats::sd(data[[variable_name]]))
+        sd_y <- append(sd_y, stats::sd(data[['CHOICE_MULTINOMIAL']]))
       }
 
       else {
@@ -155,7 +159,7 @@ feature_importance <- function(
   print(tbl_coefficients, n=24)
 
   # save feature importance to disk
-  write.csv(tbl_coefficients,
+  utils::write.csv(tbl_coefficients,
             fs::path_package(
               "extdata", "feature_importance", method, modeltype, paste0(group, ".csv"),
               package = "baitlist"),
@@ -169,10 +173,14 @@ feature_importance <- function(
 #' Calculates feature importance of the BAIT models using standardized coefficients
 #' (\eqn{\beta ^{\ast }={\frac {s_{x}}{s_{y}}}\beta}) as percentage of total.
 #' Feature importance is saved for each model as csv files in the `data` folder.
+#'
+#' @param modeltype Model type. Either 'binary' or 'multinomial'
+#' @param group Participant group. One of the following 'aggregate', 'aumc', 'olvg', 'intensivists', 'fellows'
+
 #' @export
 #'
 #' @examples
-#' standardized_coefficients()
+#' baitlist::standardized_coefficients()
 standardized_coefficients <- function(modeltype="binary", group="aggregate") {
   feature_importance(method = "standardized_coefficients", modeltype = modeltype, group = group)
 }
@@ -183,10 +191,13 @@ standardized_coefficients <- function(modeltype="binary", group="aggregate") {
 #' (difference between the highest and lowest level) with the absolute value of the
 #' criterion weight. To calculate a percentage, the maximum utility contributions
 #' are summed.
+#'
+#' @param modeltype Model type. Either 'binary' or 'multinomial'
+#' @param group Participant group. One of the following 'aggregate', 'aumc', 'olvg', 'intensivists', 'fellows'
 #' @export
 #'
 #' @examples
-#' maximum_utility_contribution()
+#' baitlist::maximum_utility_contribution()
 maximum_utility_contribution <- function(modeltype="binary", group="aggregate") {
   feature_importance(method = "maximum_utility_contribution", modeltype = modeltype, group = group)
 }

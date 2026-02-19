@@ -2,8 +2,8 @@
 #'
 #' Uses the Wald test to pairwise compare features in both models. The Wald test is defined as
 #' \eqn{W = \frac {(\beta_{1} - \beta_{2}) ^2}{\operatorname {se}(\beta_{1})^2 + \operatorname {se}(\beta_{2})^2} }
-
-#' Creates csv files in `extdata/wald/<binary|multinomial` containg the model
+#'
+#' Creates csv files in `extdata/wald/<binary|multinomial>` containing the model
 #' weights and the Wald test and p values.
 #' @export
 compare_models <- function() {
@@ -61,7 +61,7 @@ compare_models <- function() {
         s2 = se2[[c_name]]
 
         wald_stat = (c1 - c2)^2/(s1^2 + s2^2)
-        p_value <- 1 - pchisq(wald_stat, df = 1)
+        p_value <- 1 - stats::pchisq(wald_stat, df = 1)
 
         note = ""
         if(!is.na(p_value) & p_value < alpha) {
@@ -123,7 +123,7 @@ compare_models <- function() {
       print(tbl_wald, n = 27)
 
       # save Wald stats to disk
-      write.csv(
+      utils::write.csv(
         tbl_wald,
         fs::path_package(
           "extdata", "wald", modeltype, paste0(paste(comparisons[[title]], collapse="-"), ".csv"),
@@ -147,7 +147,7 @@ compare_models <- function() {
 #' @export
 #'
 #' @examples
-#' wald_interaction('intensivist', 'fellows', 'binary')
+#' baitlist::wald_interaction('intensivists', 'fellows', 'binary')
 wald_interaction <- function(group1, group2, modeltype) {
 
   group_col  <- paste0(group1, "_", group2)
@@ -236,7 +236,7 @@ wald_interaction <- function(group1, group2, modeltype) {
   # Per‑interaction Wald tests
   wald_stat <- (coef_int^2) / (se_int^2)
   p_raw     <- 1 - stats::pchisq(wald_stat, df = 1)
-  p_holm    <- p.adjust(p_raw, method = "holm")
+  p_holm    <- stats::p.adjust(p_raw, method = "holm")
 
   df_wald <- tibble::tibble(
     criterion = criterion_int,
@@ -258,7 +258,7 @@ wald_interaction <- function(group1, group2, modeltype) {
     interaction_name = "joint",
     wald = W_joint,
     p_raw = NA_real_,
-    p_value = 1 - pchisq(W_joint, df = length(d_vec)),
+    p_value = 1 - stats::pchisq(W_joint, df = length(d_vec)),
     group_col = group_col
   )
 

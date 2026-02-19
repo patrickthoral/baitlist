@@ -4,7 +4,7 @@
 #'
 #' @export
 #' @examples
-#' fit_pooled_models()
+#' baitlist::fit_pooled_models()
 fit_pooled_models <- function() {
   comparisons <- list(
     'Amsterdam UMC vs. OLVG'=c('aumc','olvg'),
@@ -23,10 +23,10 @@ fit_pooled_models <- function() {
       group2 = groups[[2]]
 
       if(modeltype == 'binary') {
-        model_pooled  <- fit_pooled_interaction_binary(group1, group2)
+        model_pooled  <- baitlist::fit_pooled_interaction_binary(group1, group2)
       }
       else if(modeltype == 'multinomial') {
-        model_pooled  <- fit_pooled_interaction_multinomial(group1, group2)
+        model_pooled  <- baitlist::fit_pooled_interaction_multinomial(group1, group2)
       }
       cat(paste0("\n\n" ))
     } # end comparison groups
@@ -39,14 +39,18 @@ fit_pooled_models <- function() {
 #' coefficients between groups
 #'
 #' @param group1 First Group
-#' @param group2 Seconde group
+#' @param group2 Second group
 #'
 #' @returns Apollo model object
 #' @export
 #'
 #' @examples
-#' fit_pooled_interaction_binary('aumc', 'olvg')
+#' baitlist::fit_pooled_interaction_binary('aumc', 'olvg')
 fit_pooled_interaction_binary <- function(group1, group2) {
+
+  # required since apollo_probabilities function is not compatible with package
+  # notation (apollo::fun) inside function
+  library(apollo)
 
   apollo::apollo_initialise()
 
@@ -184,7 +188,7 @@ fit_pooled_interaction_binary <- function(group1, group2) {
 #' coefficients between groups
 #'
 #' @param group1 First Group
-#' @param group2 Seconde group
+#' @param group2 Second group
 #'
 #' @returns Apollo model object
 #' @export
@@ -192,6 +196,10 @@ fit_pooled_interaction_binary <- function(group1, group2) {
 #' @examples
 #' fit_pooled_interaction_multinomial('aumc', 'olvg')
 fit_pooled_interaction_multinomial <- function(group1, group2) {
+
+  # required since apollo_probabilities function is not compatible with package
+  # notation (apollo::fun) inside function
+  library(apollo)
 
   apollo::apollo_initialise()
 

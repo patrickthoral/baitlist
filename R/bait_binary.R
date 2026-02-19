@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' fit_bait_binary()
+#' baitlist::fit_bait_binary(elimination_threshold = 1)
 fit_bait_binary <- function(elimination_threshold = 0.20) {
 
   groups <- c(
@@ -163,7 +163,7 @@ fit_bait_binary <- function(elimination_threshold = 0.20) {
       coef <- model$estimate
       se <- model$robse
       wald_stat <- coef^2/se^2
-      p_value <- 1 - pchisq(wald_stat, df=1)
+      p_value <- 1 - stats::pchisq(wald_stat, df=1)
 
       # determine coefficients that are above threshold
       nonsig <- p_value[(p_value > elimination_threshold)]
@@ -196,7 +196,7 @@ fit_bait_binary <- function(elimination_threshold = 0.20) {
                                wald = wald_stat,
                                p_value = p_value
     )
-    write.csv(tbl_wald,
+    utils::write.csv(tbl_wald,
               fs::path_package("extdata/apollo/binary/", paste0(apollo_control$modelName, "_weights_wald.csv"),
                                package = "baitlist"),
       row.names = FALSE

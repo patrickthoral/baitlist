@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-#' plot_relative_importance()
+#' baitlist::plot_relative_importance()
 plot_relative_importance <- function() {
 
   groups <- c(
@@ -52,7 +52,7 @@ plot_relative_importance <- function() {
 
       cat(paste0("Processing ", groups[group], " model (", modeltype, ")...\n"))
 
-      muc <- read.csv(
+      muc <- utils::read.csv(
         fs::path(datadir, "feature_importance", "maximum_utility_contribution", modeltype, paste0(group, ".csv"))
       )
 
@@ -237,7 +237,7 @@ plot_relative_importance <- function() {
 #' @export
 #'
 #' @examples
-#' plot_group_comparison()
+#' baitlist::plot_group_comparison()
 plot_group_comparison <- function() {
   comparisons <- list(
     'Amsterdam UMC vs. OLVG'=list(
@@ -273,20 +273,20 @@ plot_group_comparison <- function() {
       group1_name <- strsplit(title, split=" vs. ")[[1]][[1]]
       group2_name <- strsplit(title, split=" vs. ")[[1]][[2]]
 
-      wald <- read.csv(
+      wald <- utils::read.csv(
         fs::path(datadir, "wald", modeltype, paste0(paste(groups, collapse="-"), ".csv"))
       )
 
       feature_importance_measure <- "standardized_coefficients"
       fi_col <- 'std_coef'
 
-      fi1 <- read.csv(
+      fi1 <- utils::read.csv(
         fs::path(datadir, "feature_importance", feature_importance_measure, modeltype, paste0(group1, ".csv"))
       ) %>%
         dplyr::select(coefficient_name, variable, all_of(!!fi_col)) %>%
         dplyr::rename(!!paste0(fi_col, "_", group1) := fi_col)
 
-      fi2 <- read.csv(
+      fi2 <- utils::read.csv(
         fs::path(datadir, "feature_importance", feature_importance_measure, modeltype, paste0(group2, ".csv"))
       ) %>%
         dplyr::select(coefficient_name, variable, all_of(!!fi_col)) %>%
@@ -629,7 +629,7 @@ plot_group_comparison <- function() {
 #' @export
 #'
 #' @examples
-#' plot_pooled_group_comparison()
+#' baitlist::plot_pooled_group_comparison()
 plot_pooled_group_comparison <- function() {
   comparisons <- list(
     'Amsterdam UMC vs. OLVG'=list(

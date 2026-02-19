@@ -7,13 +7,16 @@
 create_model_weights_tables()
 }
 \value{
-gt table of last model
+list of gt tables
 }
 \description{
 Displays the model weights, constant, Null log-likelihood and estimated model log-likelihood and
-adjusted rho-squared of the different models. Saves the table as \verb{data/tables/model_weights_<group>.html} using the
+adjusted rho-squared of the binary and multinomial models for each model separately and a large
+combined table for across all groups of each model type.
+Saves the tables as \verb{extdata/tables/<binary|multinomial>/model_weights_<group>.html} using the
 gt package.
 }
 \examples{
-create_model_weights_tables()
+tables <- baitlist::create_model_weights_tables()
+tables$binary$aggregate
 }

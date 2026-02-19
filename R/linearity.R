@@ -1,15 +1,14 @@
 #' Runs linearity tests for multi-level ordered categories.
 #'
-#' @returns object containing gt table and combined plot
+#' @returns list containing gt table ('summary_table') and combined plot ('dashboard')
 #' @export
 #'
 #' @examples
-#' run_linearity_tests()
+#' lin <- run_linearity_tests()
+#' lin$summary_table
 run_linearity_tests <- function() {
 
-  # ------------------------------------------------------------
-  # Prespecified valid levels for each ordered variable
-  # ------------------------------------------------------------
+  # Pre-specified valid levels for each ordered variable
   valid_levels <- list(
     age                       = 0:3,
     frailty                   = 0:2,
@@ -28,9 +27,7 @@ run_linearity_tests <- function() {
 
   db <- load_responses("aggregate")
 
-  # ------------------------------------------------------------
   # Create dummy variables
-  # ------------------------------------------------------------
   create_dummies <- function(df, var, levels) {
 
     df[[var]] <- as.numeric(df[[var]])
@@ -52,35 +49,31 @@ run_linearity_tests <- function() {
 
   dummy_names <- function(var) paste0(var, valid_levels[[var]])
 
-  # ------------------------------------------------------------
   # Model fitters
-  # ------------------------------------------------------------
   fit_glm_linear <- function(var) {
-    glm(reformulate(var, "CHOICE_BINARY"), data = db, family = binomial())
+    stats::glm(stats::reformulate(var, "CHOICE_BINARY"), data = db, family = stats::binomial())
   }
 
   fit_glm_quad <- function(var) {
-    glm(reformulate(c(var, paste0(var, "_sq")), "CHOICE_BINARY"),
-        data = db, family = binomial())
+    stats::glm(stats::reformulate(c(var, paste0(var, "_sq")), "CHOICE_BINARY"),
+        data = db, family = stats::binomial())
   }
 
   # Dummy model: FORCE dummy0 as baseline by excluding it
   fit_glm_dummy <- function(var) {
     dums <- dummy_names(var)
     dums_no0 <- dums[dums != paste0(var, "0")]   # remove baseline
-    glm(reformulate(dums_no0, "CHOICE_BINARY"), data = db, family = binomial())
+    stats::glm(stats::reformulate(dums_no0, "CHOICE_BINARY"), data = db, family = stats::binomial())
   }
 
-  # ------------------------------------------------------------
   # Extract dummy effects (always include all prespecified levels)
-  # ------------------------------------------------------------
   extract_dummy_effects <- function(model, var) {
 
     lv <- valid_levels[[var]]
     dums <- paste0(var, lv)
     dums_no0 <- dums[dums != paste0(var, "0")]
 
-    coef_tab <- coef(summary(model))
+    coef_tab <- stats::coef(summary(model))
     coef_names <- rownames(coef_tab)
 
     dums_in_model <- intersect(dums_no0, coef_names)
@@ -131,9 +124,7 @@ run_linearity_tests <- function() {
     dplyr::arrange(df, level)
   }
 
-  # ------------------------------------------------------------
   # Plotting
-  # ------------------------------------------------------------
   plot_linearity <- function(df_var, criteria) {
     var <- df_var$variable[1]
     lv  <- valid_levels[[var]]
@@ -175,9 +166,7 @@ run_linearity_tests <- function() {
   }
 
 
-  # ------------------------------------------------------------
   # Main loop
-  # ------------------------------------------------------------
   results <- list()
   plots   <- list()
 
@@ -204,7 +193,7 @@ run_linearity_tests <- function() {
     m_dummy <- fit_glm_dummy(var)
 
     # LR test: linear vs dummy
-    lr_test <- anova(m_lin, m_dummy, test = "Chisq")
+    lr_test <- stats::anova(m_lin, m_dummy, test = "Chisq")
     lr_p <- lr_test$`Pr(>Chi)`[2]
 
     # quadratic term p-value
@@ -217,8 +206,8 @@ run_linearity_tests <- function() {
       name = criteria$name[criteria$variable == var & criteria$level == 0],
       LR_p       = lr_p,
       quad_p     = quad_p,
-      AIC_linear = AIC(m_lin),
-      AIC_dummy  = AIC(m_dummy),
+      AIC_linear = stats::AIC(m_lin),
+      AIC_dummy  = stats::AIC(m_dummy),
       conclusion = dplyr::case_when(
         lr_p > 0.05 & quad_p > 0.05 ~ "Linear",
         lr_p <= 0.05                ~ "Non-linear",

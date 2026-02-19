@@ -10,3 +10,7 @@ compare_models()
 Uses the Wald test to pairwise compare features in both models. The Wald test is defined as
 \eqn{W = \frac {(\beta_{1} - \beta_{2}) ^2}{\operatorname {se}(\beta_{1})^2 + \operatorname {se}(\beta_{2})^2} }
 }
+\details{
+Creates csv files in \verb{extdata/wald/<binary|multinomial>} containing the model
+weights and the Wald test and p values.
+}
