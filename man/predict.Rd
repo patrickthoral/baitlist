@@ -126,6 +126,19 @@ Returns tibble containing the prediction.
 Use the \code{apollo} package to predict the choice based on the fitted models
 }
 \examples{
-predict(family_values = 1)
-predict(type = "multinomial", expected_los = 1, clinical_situation = 1, age = 1, frailty = 1, life_expectancy = 1, suffering = 1, disability_cardiovascular = 1, disability_pulmonary = 1, disability_renal = 1, disability_neurological = 1, disability_gastrointestinal = 1, family_values = 1)
+baitlist::predict(family_values = 1)
+baitlist::predict(
+  type = "multinomial",
+  expected_los = 1,
+  clinical_situation = 1,
+  age = 1, frailty = 1,
+  life_expectancy = 1,
+  suffering = 1,
+  disability_cardiovascular = 1,
+  disability_pulmonary = 1,
+  disability_renal = 1,
+  disability_neurological = 1,
+  disability_gastrointestinal = 1,
+  family_values = 1
+  )
 }

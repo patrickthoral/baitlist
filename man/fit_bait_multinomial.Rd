@@ -16,5 +16,5 @@ set elimination_threshold = 1}
 Uses the \code{apollo} package for modelling.
 }
 \examples{
-fit_bait_multinomial()
+baitlist::fit_bait_multinomial(elimination_threshold = 1)
 }

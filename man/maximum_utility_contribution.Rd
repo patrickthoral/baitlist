@@ -2,9 +2,14 @@
 % Please edit documentation in R/feature_importance.R
 \name{maximum_utility_contribution}
 \alias{maximum_utility_contribution}
-\title{Calculate relative importance using maximum utility contribution.}
+\title{Calculate feature importance using maximum utility contribution.}
 \usage{
-maximum_utility_contribution()
+maximum_utility_contribution(modeltype = "binary", group = "aggregate")
+}
+\arguments{
+\item{modeltype}{Model type. Either 'binary' or 'multinomial'}
+
+\item{group}{Participant group. One of the following 'aggregate', 'aumc', 'olvg', 'intensivists', 'fellows'}
 }
 \description{
 Maximum Utility Contribution is calculated by multiplying the criteria level range
@@ -13,5 +18,5 @@ criterion weight. To calculate a percentage, the maximum utility contributions
 are summed.
 }
 \examples{
-maximum_utility_contribution()
+baitlist::maximum_utility_contribution()
 }

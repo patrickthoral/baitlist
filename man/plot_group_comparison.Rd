@@ -7,12 +7,12 @@
 plot_group_comparison()
 }
 \value{
-ggplot object (of last group)
+list of ggplots
 }
 \description{
 Creates plots with coefficients weights and significance levels comparing both groups using the Wald test.
-Saves the plots as png and svg in the \verb{data\\figures} folder.
+Saves the plots as png and svg in the \verb{extdata\\figures} folder.
 }
 \examples{
-plot_group_comparison()
+baitlist::plot_group_comparison()
 }

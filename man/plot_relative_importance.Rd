@@ -7,12 +7,13 @@
 plot_relative_importance()
 }
 \value{
-ggplot object
+list of ggplots
 }
 \description{
-Creates a plot showing the relative factor importance using Maximum Utility Contribution for the aggregate
-model. Saves the plot as png and svg in the \verb{data\\figures} folder.
+Creates plots showing the relative factor importance using Maximum Utility Contribution for the aggregate
+model for both the binary and multinomial models of all participants and subgroups.
+Saves the plot as png and svg in the \verb{extdata\\figures} folder.
 }
 \examples{
-plot_relative_importance()
+baitlist::plot_relative_importance()
 }

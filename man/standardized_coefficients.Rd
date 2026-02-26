@@ -4,13 +4,18 @@
 \alias{standardized_coefficients}
 \title{Calculate feature importance using standardized coefficients}
 \usage{
-standardized_coefficients()
+standardized_coefficients(modeltype = "binary", group = "aggregate")
+}
+\arguments{
+\item{modeltype}{Model type. Either 'binary' or 'multinomial'}
+
+\item{group}{Participant group. One of the following 'aggregate', 'aumc', 'olvg', 'intensivists', 'fellows'}
 }
 \description{
-Calculates feature importance of the binary BAIT models using standardized coefficients
+Calculates feature importance of the BAIT models using standardized coefficients
 (\eqn{\beta ^{\ast }={\frac {s_{x}}{s_{y}}}\beta}) as percentage of total.
 Feature importance is saved for each model as csv files in the \code{data} folder.
 }
 \examples{
-standardized_coefficients()
+baitlist::standardized_coefficients()
 }

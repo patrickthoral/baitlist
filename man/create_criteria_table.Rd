@@ -7,12 +7,12 @@
 create_criteria_table()
 }
 \value{
-Tibble containing criteria
+gt table of the criteria (Table 1)
 }
 \description{
 Displays the criteria and associated levels used in the discrete choice experiment. Saves
-the pivot table as \code{data/tables/table_criteria.csv}.
+the pivot table as \code{extdata/tables/table_criteria.html}.
 }
 \examples{
-create_criteria_table()
+baitlist::create_criteria_table()
 }

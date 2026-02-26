@@ -16,5 +16,5 @@ set elimination_threshold = 1}
 Uses the \code{apollo} package for modelling.
 }
 \examples{
-fit_bait_binary()
+baitlist::fit_bait_binary(elimination_threshold = 1)
 }

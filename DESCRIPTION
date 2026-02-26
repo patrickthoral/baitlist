@@ -17,17 +17,23 @@ RoxygenNote: 7.3.3
 Imports: 
     apollo,
     dplyr,
+    fs,
+    ggpattern,
     ggplot2,
     ggsignif,
     gt,
     katex,
     magrittr,
+    patchwork,
     pkgdown,
     readxl,
     rlang,
+    stats,
     stringr,
     svglite,
-    tidyr
+    tibble,
+    tidyr,
+    utils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
