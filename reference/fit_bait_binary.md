@@ -20,7 +20,7 @@ fit_bait_binary(elimination_threshold = 0.2)
 ## Examples
 
 ``` r
-fit_bait_binary()
+baitlist::fit_bait_binary(elimination_threshold = 1)
 #> 
 #> 
 #>              . ,,                                                            

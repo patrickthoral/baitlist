@@ -20,5 +20,5 @@ fit_bait_multinomial(elimination_threshold = 0.2)
 ## Examples
 
 ``` r
-fit_bait_multinomial()
+baitlist::fit_bait_multinomial(elimination_threshold = 1)
 ```

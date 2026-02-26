@@ -178,10 +178,23 @@ Returns tibble containing the prediction.
 ## Examples
 
 ``` r
-predict(family_values = 1)
-#>    withdraw  continue
-#> 1 0.0525804 0.9474196
-predict(type = "multinomial", expected_los = 1, clinical_situation = 1, age = 1, frailty = 1, life_expectancy = 1, suffering = 1, disability_cardiovascular = 1, disability_pulmonary = 1, disability_renal = 1, disability_neurological = 1, disability_gastrointestinal = 1, family_values = 1)
-#>    withdraw timelimited   continue
-#> 1 0.6023636   0.3193513 0.07828503
+baitlist::predict(family_values = 1)
+#>     withdraw  continue
+#> 1 0.05115562 0.9488444
+baitlist::predict(
+  type = "multinomial",
+  expected_los = 1,
+  clinical_situation = 1,
+  age = 1, frailty = 1,
+  life_expectancy = 1,
+  suffering = 1,
+  disability_cardiovascular = 1,
+  disability_pulmonary = 1,
+  disability_renal = 1,
+  disability_neurological = 1,
+  disability_gastrointestinal = 1,
+  family_values = 1
+  )
+#>    withdraw timelimited  continue
+#> 1 0.6879451    0.252024 0.0600309
 ```

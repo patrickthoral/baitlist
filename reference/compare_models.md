@@ -10,3 +10,8 @@ test is defined as \\W = \frac {(\beta\_{1} - \beta\_{2})
 ``` r
 compare_models()
 ```
+
+## Details
+
+Creates csv files in `extdata/wald/<binary|multinomial>` containing the
+model weights and the Wald test and p values.

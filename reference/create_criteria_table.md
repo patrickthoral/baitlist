@@ -1,7 +1,8 @@
 # Create Criteria table
 
 Displays the criteria and associated levels used in the discrete choice
-experiment. Saves the pivot table as `data/tables/table_criteria.csv`.
+experiment. Saves the pivot table as
+`extdata/tables/table_criteria.html`.
 
 ## Usage
 
@@ -11,25 +12,147 @@ create_criteria_table()
 
 ## Value
 
-Tibble containing criteria
+gt table of the criteria (Table 1)
 
 ## Examples
 
 ``` r
-create_criteria_table()
-#> # A tibble: 12 × 5
-#>    Criterion                             `Level 1` `Level 2` `Level 3` `Level 4`
-#>    <chr>                                 <chr>     <chr>     <chr>     <chr>    
-#>  1 Expected additional ICU length of st… A couple… A couple… NA        NA       
-#>  2 Clinical situation                    Deterior… No impro… NA        NA       
-#>  3 Age (years)                           40        55        70        85       
-#>  4 Frailty at hospital admission         1 - 2     3 - 4     5 - 6     NA       
-#>  5 Life expectancy (pre-admission)       6 - 12 m… 1 - 5 ye… > 5 years NA       
-#>  6 Burden of Suffering                   Limited   Severe    NA        NA       
-#>  7 Cardiovascular impairment             NYHA I    NYHA II   NYHA III  NYHA IV  
-#>  8 Pulmonary impairment                  No impai… Moderate… Severe i… NA       
-#>  9 Renal impairment                      No impai… Pre-dial… Dialysis… NA       
-#> 10 Neurological impairment               mRS 0-1   mRS 2-3   mRS 4-5   NA       
-#> 11 Gastro-intestinal impairment          Without … Tube-fee… NA        NA       
-#> 12 Patient or Family Values              Expected… Expected… NA        NA       
+baitlist::create_criteria_table()
+
+
+  
 ```
+
+Level 0
+
+Level 1
+
+Level 2
+
+Level 3
+
+Baseline Clinical and Prognostic Factors
+
+Expected additional ICU length of stay
+
+A couple of weeks
+
+A couple of months
+
+  
+
+  
+
+Clinical situation
+
+Deterioration
+
+No improvement
+
+  
+
+  
+
+Age (years)
+
+40
+
+55
+
+70
+
+85
+
+Frailty at hospital admission
+
+1 - 2
+
+3 - 4
+
+5 - 6
+
+  
+
+Life expectancy (pre-admission)
+
+6 - 12 months
+
+1 - 5 years
+
+\> 5 years
+
+  
+
+Burden of Suffering
+
+Limited
+
+Severe
+
+  
+
+  
+
+Expected Post-ICU Impairment
+
+Cardiovascular impairment
+
+NYHA I
+
+NYHA II
+
+NYHA III
+
+NYHA IV
+
+Pulmonary impairment
+
+No impairment
+
+Moderate impairment
+
+Severe impairment
+
+  
+
+Renal impairment
+
+No impairment (GFR \> 30)
+
+Pre-dialysis (GFR 15-30)
+
+Dialysis dependent (GFR \< 15)
+
+  
+
+Neurological impairment
+
+mRS 0-1
+
+mRS 2-3
+
+mRS 4-5
+
+  
+
+Gastro-intestinal impairment
+
+Without tube-feeding
+
+Tube-feeding dependent
+
+  
+
+  
+
+Patient or Family Values
+
+Patient or Family Values
+
+Expected future physical disabilities are possibly acceptable
+
+Expected future physical disabilities are most likely unacceptable
+
+  
+
+  

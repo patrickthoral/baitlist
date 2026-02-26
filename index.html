@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Behavioural Artificial Intelligence Technology for Life Sustaining Therapy (BAITLiST) • baitlist</title>
-<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="katex-auto.js"></script><script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -74,6 +75,7 @@
 <span><span class="co"># install.packages("pkgdown")</span></span>
 <span><span class="co"># install.packages("katex")</span></span>
 <span><span class="co"># install.packages("svglite")</span></span>
+<span><span class="co"># install.packages("ggpattern")</span></span>
 <span></span>
 <span><span class="co"># Update packages using renv</span></span>
 <span><span class="co"># renv::update</span></span>
@@ -93,30 +95,36 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add devtools to .Rprofile</span></span>
-<span><span class="co"># use_devtools()</span></span>
+<span><span class="fu">use_devtools</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Check if correctly installed</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">dev_sitrep</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Creates package</span></span>
-<span><span class="co"># usethis::create_package("baitlist")</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">create_package</span><span class="op">(</span><span class="st">"baitlist"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add dependencies</span></span>
-<span><span class="co"># usethis::use_package("rlang")</span></span>
-<span><span class="co"># usethis::use_package("dplyr")</span></span>
-<span><span class="co"># usethis::use_package("tidyr")</span></span>
-<span><span class="co"># usethis::use_package("stringr")</span></span>
-<span><span class="co"># usethis::use_package("readxl")</span></span>
-<span><span class="co"># usethis::use_package("apollo")</span></span>
-<span><span class="co"># usethis::use_package("ggplot2")</span></span>
-<span><span class="co"># usethis::use_package("ggsignif")</span></span>
-<span><span class="co"># usethis::use_package("gt")</span></span>
-<span><span class="co"># usethis::use_package("magrittr")</span></span>
-<span><span class="co"># usethis::use_package("pkgdown")</span></span>
-<span><span class="co"># usethis::use_package("katex")</span></span>
-<span><span class="co"># usethis::use_package("svglite")</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"rlang"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"dplyr"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"tidyr"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"stringr"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"readxl"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"apollo"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"ggplot2"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"ggsignif"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"gt"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"magrittr"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"pkgdown"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"katex"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"svglite"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"ggpattern"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"stats"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"utils"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"fs"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"patchwork"</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"tibble"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Update documentation</span></span>
+<span><span class="co"># Update documentation and NAMESPACE</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">document</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Test package</span></span>
@@ -134,27 +142,30 @@
 <span><span class="co"># Allows accessing functions with baitlist::fun()</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Show linearity tests</span></span>
+<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/run_linearity_tests.html">run_linearity_tests</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Fit binary logit models for all groups. Disables backward elimination by setting threshold to 1</span></span>
 <span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/fit_bait_binary.html">fit_bait_binary</a></span><span class="op">(</span>elimination_threshold <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Fit multinomial logit models for all groups. Disables backward elimination by setting threshold to 1</span></span>
 <span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/fit_bait_multinomial.html">fit_bait_multinomial</a></span><span class="op">(</span>elimination_threshold <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Calculate feature importance using standardized coefficients</span></span>
-<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/standardized_coefficients.html">standardized_coefficients</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Fit pooled interaction models</span></span>
+<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/fit_pooled_models.html">fit_pooled_models</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Calculate feature importance using maximum utility contribution</span></span>
-<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/maximum_utility_contribution.html">maximum_utility_contribution</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Compare model weights between models using Wald test</span></span>
-<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/compare_models.html">compare_models</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Calculate feature importance using standardized coefficients and maximum utility contribution</span></span>
+<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/feature_importance_all.html">feature_importance_all</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create tables and figures</span></span>
+<span><span class="co"># Tables</span></span>
 <span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/create_criteria_table.html">create_criteria_table</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/create_model_weights_tables.html">create_model_weights_tables</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/create_group_comparison_table.html">create_group_comparison_table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/create_pooled_group_comparison_tables.html">create_pooled_group_comparison_tables</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Figures</span></span>
 <span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/plot_relative_importance.html">plot_relative_importance</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/plot_group_comparison.html">plot_group_comparison</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">baitlist</span><span class="fu">::</span><span class="fu"><a href="reference/plot_pooled_group_comparison.html">plot_pooled_group_comparison</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="package-documentation">Package Documentation<a class="anchor" aria-label="anchor" href="#package-documentation"></a>
@@ -164,6 +175,7 @@
 <span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_pkgdown_github_pages</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Preview your site locally before publishing</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">build_site</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_home.html" class="external-link">build_home_index</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/init_site.html" class="external-link">init_site</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
